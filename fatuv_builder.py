@@ -3,10 +3,14 @@ ffibuilder = FFI()
 
 
 ffibuilder.cdef("""
-	// struct uv_loop_t;
+	typedef enum {
+		UV_RUN_DEFAULT = 0,
+		UV_RUN_ONCE,
+		UV_RUN_NOWAIT
+	} uv_run_mode;
 
-	// uv_loop_t* uv_default_loop(void);
-	// int uv_run(uv_loop_t*, int mode);
+	void* uv_default_loop(void);
+	int uv_run(void*, uv_run_mode mode);
 
 	const char* uv_version_string(void);
 """)
