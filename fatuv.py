@@ -29,7 +29,7 @@ uv_signal_delete        = lib.fatuv_signal_delete
 
 uv_signal_init          = lib.fatuv_signal_init
 uv_signal_start         = lib.fatuv_signal_start
-uv_signal_start_oneshot = lib.fatuv_signal_start_oneshot
+#uv_signal_start_oneshot = lib.fatuv_signal_start_oneshot
 uv_signal_stop          = lib.fatuv_signal_stop
 
 __all__ = [
@@ -189,12 +189,14 @@ class Signal(object):
 		self.callback = callback
 		uv_signal_start(handle, lib.fatuv_signal_callback, signum)
 
+	"""
 	def start_oneshot(self, callback, signum):
 		handle = self.handle
 		assert handle
 
 		self.callback = callback
 		uv_signal_start_oneshot(handle, lib.fatuv_signal_callback, signum)
+	"""
 
 	def stop(self):
 		handle = self.handle

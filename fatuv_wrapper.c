@@ -156,11 +156,13 @@ fatuv_signal_start(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum
 	return uv_signal_start((uv_signal_t*)handle, (uv_signal_cb)signal_cb, signum);
 }
 
+#if 0  // debian9.5 libuv1-dev package is too old
 int
 fatuv_signal_start_oneshot(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum)
 {
 	return uv_signal_start_oneshot((uv_signal_t*)handle, (uv_signal_cb)signal_cb, signum);
 }
+#endif
 
 int
 fatuv_signal_stop(fatuv_signal_t* handle)

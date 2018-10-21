@@ -10,14 +10,25 @@
 
 ```
 # python -m pip install cffi
-# pypy -m pip install cffi
-```
+# pypy -m pip install pycparser
 
-```
 $ make
 $ python uv-hello.py 
 $ pypy uv-hello.py
 ```
+
+## debian 9.5
+
+```
+aptitude install make gcc libuv1-dev pypy pypy-dev
+```
+
+## openbsd 6.3
+
+```
+pkg_add -v pypy
+```
+
 
 [1]: https://github.com/saghul/pyuv/
 [2]: https://github.com/MagicStack/uvloop

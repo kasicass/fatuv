@@ -51,7 +51,7 @@ void fatuv_signal_delete(fatuv_signal_t* handle);
 
 int fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* handle);
 int fatuv_signal_start(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum);
-int fatuv_signal_start_oneshot(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum);
+//int fatuv_signal_start_oneshot(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum);
 int fatuv_signal_stop(fatuv_signal_t* handle);
 
 #endif
