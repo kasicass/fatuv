@@ -8,3 +8,5 @@ cffi-fatuv:
 clean:
 	cd src && rm -rf _fatuv.c *.o *.so
 	rm -rf *.so *.pyc *.core __pycache__
+	rm -rf fatuv/*.pyc
+
