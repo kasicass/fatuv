@@ -95,7 +95,8 @@ class Idle(object):
 		handle = self.handle
 		assert handle
 
-		self.handle = None
+		self.handle   = None
+		self.callback = None
 		Idle.instances[handle] = None
 
 		uv_idle_stop(handle)
@@ -136,7 +137,8 @@ class Timer(object):
 		handle = self.handle
 		assert handle
 
-		self.handle = None
+		self.handle   = None
+		self.callback = None
 		Timer.instances[handle] = None
 
 		uv_timer_stop(handle)
@@ -198,11 +200,12 @@ class Signal(object):
 		handle = self.handle
 		assert handle
 
-		self.handle = None
+		self.handle   = None
+		self.callback = None
 		Signal.instances[handle] = None
 
 		uv_signal_stop(handle)
-		uv_signal_delete(handle)
+		# uv_signal_delete(handle)  # or libuv will crash (uv-timer.py)
 
 	def _call_callback(self, signum):
 		if self.callback:
