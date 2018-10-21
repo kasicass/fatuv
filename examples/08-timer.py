@@ -25,9 +25,9 @@ def timer_callback(handle):
 		handle.repeat   = 3.5 # 3.5s
 		handle.again()
 
-def signal_cb(handle, signum):
-	timer_h.stop()
-	handle.stop()
+def signal_cb(signal_h, signum):
+	timer_h.close()
+	signal_h.close()
 
 loop = Loop.default_loop()
 

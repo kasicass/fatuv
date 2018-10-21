@@ -7,7 +7,7 @@ uv_idle_init            = lib.fatuv_idle_init
 uv_idle_start           = lib.fatuv_idle_start
 uv_idle_stop            = lib.fatuv_idle_stop
 
-__all__ = ['Idle',]
+__all__ = ['Idle']
 
 @ffi.def_extern()
 def fatuv_idle_callback(idle_handle):
@@ -27,8 +27,13 @@ class Idle(Handle):
 		self.idle_callback = None
 
 	def _dispose(self):
-		assert self.handle
-		uv_idle_delete(self.handle)
+		hanle = self.handle
+		assert handle
+
+		Idle.idle_instances.pop(handle, None)
+		self.idle_callback = None
+
+		uv_idle_delete(handle)
 		self.handle = None
 
 	def start(self, callback):

@@ -1,4 +1,5 @@
 from _fatuv import ffi, lib
+from .handle import Handle
 
 uv_timer_new            = lib.fatuv_timer_new
 uv_timer_delete         = lib.fatuv_timer_delete
@@ -13,37 +14,52 @@ __all__ = ['Timer']
 
 @ffi.def_extern()
 def fatuv_timer_callback(timer_handle):
-	timer = Timer.instances[timer_handle]
-	timer._call_callback()
+	obj = Timer.timer_instances[timer_handle]
+	obj._call_timer_callback()
 
-class Timer(object):
-	instances = {}
+class Timer(Handle):
+	timer_instances = {}
 
 	def __init__(self, loop):
+		super(Timer, self).__init__(loop)
+
 		handle = uv_timer_new()
 		uv_timer_init(loop.handle, handle)
-		Timer.instances[handle] = self
 
-		self.handle   = handle
-		self.callback = None
+		self.handle         = handle
+		self.timer_callback = None
+
+	def _dispose(self):
+		handle = self.handle
+		assert handle
+
+		Timer.timer_instances.pop(self.handle, None)
+		self.timer_callback = None
+
+		uv_timer_delete(handle)
+		self.handle = None
 
 	def start(self, callback, timeout, repeat):
 		handle = self.handle
 		assert handle
 
-		self.callback = callback
+		self.timer_callback           = callback
+		Timer.timer_instances[handle] = self
 		uv_timer_start(handle, lib.fatuv_timer_callback, int(timeout*1000), int(repeat*1000))
+
+	def _call_timer_callback(self):
+		if self.timer_callback:
+			self.timer_callback(self)
 
 	def stop(self):
 		handle = self.handle
 		assert handle
 
-		self.handle   = None
-		self.callback = None
-		Timer.instances[handle] = None
-
 		uv_timer_stop(handle)
-		uv_timer_delete(handle)
+
+		Timer.timer_instances[handle] = None
+		self.timer_callback           = None
+
 
 	def again(self):
 		assert self.handle
@@ -58,8 +74,4 @@ class Timer(object):
 	def repeat(self, value):
 		assert self.handle
 		uv_timer_set_repeat(self.handle, int(value*1000))
-
-	def _call_callback(self):
-		if self.callback:
-			self.callback(self)
 

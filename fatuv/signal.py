@@ -28,8 +28,13 @@ class Signal(Handle):
 		self.signal_callback = None
 
 	def _dispose(self):
-		assert self.handle
-		uv_signal_delete(self.handle)
+		handle = self.handle
+		assert handle
+
+		Signal.signal_instances.pop(handle, None)
+		self.signal_callback = None
+		
+		uv_signal_delete(handle)
 		self.handle = None
 
 	def start(self, callback, signum):
