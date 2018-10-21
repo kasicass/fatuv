@@ -43,8 +43,8 @@ int fatuv_send_buffer_size(fatuv_handle_t* handle, int* value);
 int fatuv_recv_buffer_size(fatuv_handle_t* handle, int* value);
 
 /* stream */
+int fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb);
 /*
-int fatuv_listen(uv_stream_t* stream, int backlog, uv_connection_cb cb);
 int fatuv_accept(uv_stream_t* server, uv_stream_t* client);
 int fatuv_read_start(uv_stream_t*, uv_alloc_cb alloc_cb, uv_read_cb read_cb);
 int fatuv_read_stop(uv_stream_t*);
@@ -61,7 +61,7 @@ void fatuv_tcp_delete(fatuv_tcp_t* handle);
 int fatuv_tcp_init(fatuv_loop_t* loop, fatuv_tcp_t* handle);
 int fatuv_tcp_nodelay(fatuv_tcp_t* handle, int enable);
 int fatuv_tcp_keepalive(fatuv_tcp_t* handle, int enable, unsigned int delay);
-// int fatuv_tcp_v4_bind(uv_tcp_t* handle, const char* ip, unsigned int port);
+int fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port);
 
 /*
  * idle

@@ -66,6 +66,16 @@ fatuv_recv_buffer_size(fatuv_handle_t* handle, int* value)
 }
 
 /*
+ * stream
+ */
+
+int
+fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb)
+{
+	return uv_listen((uv_stream_t*)stream, backlog, (uv_connection_cb)cb);
+}
+
+/*
  * tcp
  */
 
@@ -96,6 +106,14 @@ int
 fatuv_tcp_keepalive(fatuv_tcp_t* handle, int enable, unsigned int delay)
 {
 	return uv_tcp_keepalive((uv_tcp_t*)handle, enable, delay);
+}
+
+int
+fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port)
+{
+	struct sockaddr_in addr;
+	uv_ip4_addr(ip, port, &addr);
+	return uv_tcp_bind((uv_tcp_t*)handle, (const struct sockaddr*)&addr, 0);
 }
 
 /*
