@@ -54,8 +54,8 @@ int fatuv_fileno(const fatuv_handle_t* handle, int* fd);
 
 /* stream */
 int fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb);
+int fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client);
 /*
-int fatuv_accept(uv_stream_t* server, uv_stream_t* client);
 int fatuv_read_start(uv_stream_t*, uv_alloc_cb alloc_cb, uv_read_cb read_cb);
 int fatuv_read_stop(uv_stream_t*);
 int fatuv_write(uv_write_t* req, uv_stream_t* handle, const uv_buf_t bufs[], unsigned int nbufs, uv_write_cb cb);

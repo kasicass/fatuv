@@ -91,6 +91,12 @@ fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb)
 	return uv_listen((uv_stream_t*)stream, backlog, (uv_connection_cb)cb);
 }
 
+int
+fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client)
+{
+	return uv_accept((uv_stream_t*)server, (uv_stream_t*)client);
+}
+
 /*
  * tcp
  */
