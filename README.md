@@ -17,13 +17,13 @@ $ python uv-hello.py
 $ pypy uv-hello.py
 ```
 
-## debian 9.5
+## Debian 9.5
 
 ```
 aptitude install make gcc libuv1-dev pypy pypy-dev
 ```
 
-## openbsd 6.3
+## OpenBSD 6.3
 
 ```
 pkg_add -v pypy
