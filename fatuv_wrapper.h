@@ -4,9 +4,11 @@
 typedef void fatuv_loop_t;
 typedef void fatuv_idle_t;
 typedef void fatuv_timer_t;
+typedef void fatuv_signal_t;
 
 typedef void (*fatuv_idle_cb)(fatuv_idle_t* handle);
 typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
+typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
 
 /* loop */
 typedef enum {
@@ -42,5 +44,14 @@ int fatuv_timer_stop(fatuv_timer_t* handle);
 int fatuv_timer_again(fatuv_timer_t* handle);
 void fatuv_timer_set_repeat(fatuv_timer_t* handle, uint64_t repeat);
 uint64_t fatuv_timer_get_repeat(const fatuv_timer_t* handle);
+
+/* signal */
+fatuv_signal_t* fatuv_signal_new(void);
+void fatuv_signal_delete(fatuv_signal_t* handle);
+
+int fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* handle);
+int fatuv_signal_start(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum);
+int fatuv_signal_start_oneshot(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum);
+int fatuv_signal_stop(fatuv_signal_t* handle);
 
 #endif

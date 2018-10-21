@@ -1,6 +1,6 @@
 import time
-from fatuv import Loop
-from fatuv import Timer
+import signal
+from fatuv import Loop, Timer, Signal
 
 counter = 0
 
@@ -22,12 +22,19 @@ def timer_callback(handle):
 		handle.repeat   = 3.5 # 3.5s
 		handle.again()
 
+def signal_cb(handle, signum):
+	timer_h.stop()
+	handle.stop()
+
 loop = Loop.default_loop()
 
-handle = Timer(loop)
-handle.start(timer_callback, 1.5, 0.5) # timeout = 1.5s, repeat = 0.5s
+timer_h = Timer(loop)
+timer_h.start(timer_callback, 1.5, 0.5) # timeout = 1.5s, repeat = 0.5s
+
+signal_h = Signal(loop)
+signal_h.start(signal_cb, signal.SIGINT)
 
 print 'timer start,', time.strftime('%H:%M:%S')
-print 'timer repeat =', handle.repeat
+print 'timer repeat =', timer_h.repeat
 loop.run()
 

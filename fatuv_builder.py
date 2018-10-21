@@ -11,6 +11,7 @@ data = data[:-7] # remove #endif
 data += """
 extern "Python" void fatuv_idle_callback(fatuv_idle_t*);
 extern "Python" void fatuv_timer_callback(fatuv_timer_t*);
+extern "Python" void fatuv_signal_callback(fatuv_signal_t*, int signum);
 """
 
 

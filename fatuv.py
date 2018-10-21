@@ -1,32 +1,40 @@
 from _fatuv import ffi, lib
 
-uv_default_loop     = lib.fatuv_default_loop
+uv_default_loop         = lib.fatuv_default_loop
 
-uv_loop_new         = lib.fatuv_loop_new
-uv_loop_delete      = lib.fatuv_loop_delete
-uv_loop_init        = lib.fatuv_loop_init
-uv_loop_close       = lib.fatuv_loop_close
+uv_loop_new             = lib.fatuv_loop_new
+uv_loop_delete          = lib.fatuv_loop_delete
+uv_loop_init            = lib.fatuv_loop_init
+uv_loop_close           = lib.fatuv_loop_close
 
-uv_run              = lib.fatuv_run
+uv_run                  = lib.fatuv_run
 
-uv_idle_new         = lib.fatuv_idle_new
-uv_idle_delete      = lib.fatuv_idle_delete
-uv_idle_init        = lib.fatuv_idle_init
-uv_idle_start       = lib.fatuv_idle_start
-uv_idle_stop        = lib.fatuv_idle_stop
+uv_idle_new             = lib.fatuv_idle_new
+uv_idle_delete          = lib.fatuv_idle_delete
+uv_idle_init            = lib.fatuv_idle_init
+uv_idle_start           = lib.fatuv_idle_start
+uv_idle_stop            = lib.fatuv_idle_stop
 
-uv_timer_new        = lib.fatuv_timer_new
-uv_timer_delete     = lib.fatuv_timer_delete
-uv_timer_init       = lib.fatuv_timer_init
-uv_timer_start      = lib.fatuv_timer_start
-uv_timer_stop       = lib.fatuv_timer_stop
-uv_timer_again      = lib.fatuv_timer_again
-uv_timer_set_repeat = lib.fatuv_timer_set_repeat
-uv_timer_get_repeat = lib.fatuv_timer_get_repeat
+uv_timer_new            = lib.fatuv_timer_new
+uv_timer_delete         = lib.fatuv_timer_delete
+uv_timer_init           = lib.fatuv_timer_init
+uv_timer_start          = lib.fatuv_timer_start
+uv_timer_stop           = lib.fatuv_timer_stop
+uv_timer_again          = lib.fatuv_timer_again
+uv_timer_set_repeat     = lib.fatuv_timer_set_repeat
+uv_timer_get_repeat     = lib.fatuv_timer_get_repeat
+
+uv_signal_new           = lib.fatuv_signal_new
+uv_signal_delete        = lib.fatuv_signal_delete
+
+uv_signal_init          = lib.fatuv_signal_init
+uv_signal_start         = lib.fatuv_signal_start
+uv_signal_start_oneshot = lib.fatuv_signal_start_oneshot
+uv_signal_stop          = lib.fatuv_signal_stop
 
 __all__ = [
 	'UV_RUN_DEFAULT', 'UV_RUN_ONCE', 'UV_RUN_NOWAIT',
-	'Loop', 'Idle'
+	'Loop', 'Idle', 'Signal'
 ]
 
 UV_RUN_DEFAULT = lib.FATUV_RUN_DEFAULT
@@ -151,4 +159,52 @@ class Timer(object):
 	def _call_callback(self):
 		if self.callback:
 			self.callback(self)
+
+#
+# Signal
+#
+
+@ffi.def_extern()
+def fatuv_signal_callback(signal_handle, signum):
+	signal = Signal.instances[signal_handle]
+	signal._call_callback(signum)
+
+class Signal(object):
+	instances = {}
+
+	def __init__(self, loop):
+		handle = uv_signal_new()
+		uv_signal_init(loop.handle, handle)
+		Signal.instances[handle] = self
+
+		self.handle   = handle
+		self.callback = None
+
+	def start(self, callback, signum):
+		handle = self.handle
+		assert handle
+
+		self.callback = callback
+		uv_signal_start(handle, lib.fatuv_signal_callback, signum)
+
+	def start_oneshot(self, callback, signum):
+		handle = self.handle
+		assert handle
+
+		self.callback = callback
+		uv_signal_start_oneshot(handle, lib.fatuv_signal_callback, signum)
+
+	def stop(self):
+		handle = self.handle
+		assert handle
+
+		self.handle = None
+		Signal.instances[handle] = None
+
+		uv_signal_stop(handle)
+		uv_signal_delete(handle)
+
+	def _call_callback(self, signum):
+		if self.callback:
+			self.callback(self, signum)
 
