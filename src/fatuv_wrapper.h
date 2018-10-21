@@ -9,8 +9,8 @@ typedef void fatuv_idle_t;
 typedef void fatuv_timer_t;
 typedef void fatuv_signal_t;
 
-typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
+typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
 typedef void (*fatuv_idle_cb)(fatuv_idle_t* handle);
 typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
@@ -38,7 +38,9 @@ int fatuv_run(fatuv_loop_t*, fatuv_run_mode mode);
  * handle
  */
 
-// void fatuv_close(fatuv_handle_t* handle, fatuv_close_cb close_cb);
+void fatuv_close(fatuv_handle_t* handle, fatuv_close_cb close_cb);
+int fatuv_is_active(const fatuv_handle_t* handle);
+int fatuv_is_closing(const fatuv_handle_t* handle);
 int fatuv_send_buffer_size(fatuv_handle_t* handle, int* value);
 int fatuv_recv_buffer_size(fatuv_handle_t* handle, int* value);
 

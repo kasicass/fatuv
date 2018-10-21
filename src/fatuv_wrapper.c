@@ -45,13 +45,23 @@ fatuv_run(fatuv_loop_t* loop, fatuv_run_mode mode)
 /*
  * handle
  */
-#if 0
 void
 fatuv_close(fatuv_handle_t* handle, fatuv_close_cb close_cb)
 {
 	uv_close((uv_handle_t*)handle, (uv_close_cb)close_cb);
 }
-#endif
+
+int
+fatuv_is_active(const fatuv_handle_t* handle)
+{
+	return uv_is_active((const uv_handle_t*)handle);
+}
+
+int
+fatuv_is_closing(const fatuv_handle_t* handle)
+{
+	return uv_is_closing((const uv_handle_t*)handle);
+}
 
 int
 fatuv_send_buffer_size(fatuv_handle_t* handle, int* value)
