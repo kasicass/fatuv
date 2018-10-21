@@ -1,5 +1,7 @@
 from _fatuv import lib
 
+uv_default_loop = lib.fatuv_default_loop
+
 uv_loop_new    = lib.fatuv_loop_new
 uv_loop_delete = lib.fatuv_loop_delete
 uv_loop_init   = lib.fatuv_loop_init
@@ -14,8 +16,12 @@ UV_RUN_ONCE    = lib.FATUV_RUN_ONCE
 UV_RUN_NOWAIT  = lib.FATUV_RUN_NOWAIT
 
 class Loop(object):
-	def __init__(self):
-		self.handle = uv_loop_new()
+	@staticmethod
+	def default_loop():
+		return Loop(uv_default_loop())
+
+	def __init__(self, handle=None):
+		self.handle = handle or uv_loop_new()
 		uv_loop_init(self.handle)
 
 	def run(self, mode):
