@@ -1,3 +1,6 @@
+import sys
+sys.path.append('.')
+
 from fatuv import Loop
 from fatuv import Idle
 

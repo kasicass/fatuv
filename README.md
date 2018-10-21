@@ -13,8 +13,8 @@
 # pypy -m pip install pycparser
 
 $ make
-$ python uv-hello.py 
-$ pypy uv-hello.py
+$ python examples/08-timer.py
+$ pypy examples/08-timer.py
 ```
 
 ## Debian 9.5
