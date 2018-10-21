@@ -1,4 +1,5 @@
 from _fatuv import ffi, lib
+from .handle import Handle
 
 uv_send_buffer_size = lib.fatuv_send_buffer_size
 uv_recv_buffer_size = lib.fatuv_recv_buffer_size
@@ -19,10 +20,12 @@ def fatuv_connection_callback(tcp_handle, status):
 	tcp = TCP.connections[tcp_handle]
 	tcp._call_connection_cb(status)
 
-class TCP(object):
+class TCP(Handle):
 	connections = {}
 
 	def __init__(self, loop):
+		super(TCP, self).__init__(loop)
+
 		handle = uv_tcp_new();
 		uv_tcp_init(loop.handle, handle)
 

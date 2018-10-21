@@ -1,8 +1,11 @@
 from _fatuv import ffi, lib
+from .error import HandleError
+from .internal import get_strerror
 
 uv_close      = lib.fatuv_close
 uv_is_active  = lib.fatuv_is_active
 uv_is_closing = lib.fatuv_is_closing
+uv_fileno     = lib.fatuv_fileno
 
 __all__ = ['Handle',]
 
@@ -45,4 +48,12 @@ class Handle(object):
 	def closed(self):
 		assert self.handle
 		return bool(uv_is_closing(self.handle))
+
+	def fileno(self):
+		assert self.handle
+		ptr = ffi.new('int*')
+		err = uv_fileno(self.handle, ptr)
+		if err < 0:
+			raise HandleError((err, get_strerror(err)))
+		return ptr[0]
 

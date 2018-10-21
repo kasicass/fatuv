@@ -75,6 +75,12 @@ fatuv_recv_buffer_size(fatuv_handle_t* handle, int* value)
 	return uv_recv_buffer_size((uv_handle_t*)handle, value);
 }
 
+int
+fatuv_fileno(const fatuv_handle_t* handle, int* fd)
+{
+	return uv_fileno((uv_handle_t*)handle, fd);
+}
+
 /*
  * stream
  */
