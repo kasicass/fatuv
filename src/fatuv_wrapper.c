@@ -43,6 +43,62 @@ fatuv_run(fatuv_loop_t* loop, fatuv_run_mode mode)
 }
 
 /*
+ * handle
+ */
+#if 0
+void
+fatuv_close(fatuv_handle_t* handle, fatuv_close_cb close_cb)
+{
+	uv_close((uv_handle_t*)handle, (uv_close_cb)close_cb);
+}
+#endif
+
+int
+fatuv_send_buffer_size(fatuv_handle_t* handle, int* value)
+{
+	return uv_send_buffer_size((uv_handle_t*)handle, value);
+}
+
+int
+fatuv_recv_buffer_size(fatuv_handle_t* handle, int* value)
+{
+	return uv_recv_buffer_size((uv_handle_t*)handle, value);
+}
+
+/*
+ * tcp
+ */
+
+fatuv_tcp_t*
+fatuv_tcp_new(void)
+{
+	return (fatuv_tcp_t*)malloc(sizeof(uv_tcp_t));
+}
+
+void fatuv_tcp_delete(fatuv_tcp_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_tcp_init(fatuv_loop_t* loop, fatuv_tcp_t* handle)
+{
+	return uv_tcp_init((uv_loop_t*)loop, (uv_tcp_t*)handle);
+}
+
+int
+fatuv_tcp_nodelay(fatuv_tcp_t* handle, int enable)
+{
+	return uv_tcp_nodelay((uv_tcp_t*)handle, enable);
+}
+
+int
+fatuv_tcp_keepalive(fatuv_tcp_t* handle, int enable, unsigned int delay)
+{
+	return uv_tcp_keepalive((uv_tcp_t*)handle, enable, delay);
+}
+
+/*
  * idle
  */
 
