@@ -1,4 +1,5 @@
 from _fatuv import ffi, lib
+from .handle import Handle
 
 uv_signal_new           = lib.fatuv_signal_new
 uv_signal_delete        = lib.fatuv_signal_delete
@@ -11,26 +12,37 @@ __all__ = ['Signal']
 
 @ffi.def_extern()
 def fatuv_signal_callback(signal_handle, signum):
-	signal = Signal.instances[signal_handle]
-	signal._call_callback(signum)
+	signal = Signal.signal_instances[signal_handle]
+	signal._call_signal_callback(signum)
 
-class Signal(object):
-	instances = {}
+class Signal(Handle):
+	signal_instances = {}
 
 	def __init__(self, loop):
+		super(Signal, self).__init__(loop)
+
 		handle = uv_signal_new()
 		uv_signal_init(loop.handle, handle)
-		Signal.instances[handle] = self
 
-		self.handle   = handle
-		self.callback = None
+		self.handle          = handle
+		self.signal_callback = None
+
+	def _dispose(self):
+		assert self.handle
+		uv_signal_delete(self.handle)
+		self.handle = None
 
 	def start(self, callback, signum):
 		handle = self.handle
 		assert handle
 
-		self.callback = callback
+		self.signal_callback            = callback
+		Signal.signal_instances[handle] = self
 		uv_signal_start(handle, lib.fatuv_signal_callback, signum)
+
+	def _call_signal_callback(self, signum):
+		if self.signal_callback:
+			self.signal_callback(self, signum)
 
 	"""
 	def start_oneshot(self, callback, signum):
@@ -45,14 +57,8 @@ class Signal(object):
 		handle = self.handle
 		assert handle
 
-		self.handle   = None
-		self.callback = None
-		Signal.instances[handle] = None
-
 		uv_signal_stop(handle)
-		# uv_signal_delete(handle)  # or libuv will crash (uv-timer.py)
 
-	def _call_callback(self, signum):
-		if self.callback:
-			self.callback(self, signum)
+		Signal.signal_instances[handle] = None
+		self.signal_callback            = None
 
