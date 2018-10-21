@@ -1,26 +1,20 @@
 from cffi import FFI
 ffibuilder = FFI()
 
+include_file = open('fatuv_wrapper.h', 'r')
+data = include_file.read()
+include_file.close()
 
-ffibuilder.cdef("""
-	typedef enum {
-		UV_RUN_DEFAULT = 0,
-		UV_RUN_ONCE,
-		UV_RUN_NOWAIT
-	} uv_run_mode;
+data = data[48:] # remove FATUV_WRAPPER_H
+data = data[:-7] # remove #endif
 
-	void* uv_default_loop(void);
-	int uv_run(void*, uv_run_mode mode);
-
-	const char* uv_version_string(void);
-""")
-
-
+ffibuilder.cdef(data)
 ffibuilder.set_source("_fatuv", """
-	#include <uv.h>
+	#include "fatuv_wrapper.h"
 """,
 	include_dirs=['/usr/local/include'],
 	library_dirs=['/usr/local/lib'],
+	sources=['fatuv_wrapper.c'],
 	libraries=['uv'])
 
 

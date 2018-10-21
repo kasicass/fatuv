@@ -1,7 +1,8 @@
-import fatuv
+from fatuv import Loop
+from fatuv import UV_RUN_DEFAULT
 
-loop = fatuv.uv_default_loop()
+loop = Loop()
 
 print 'Now quitting.'
-fatuv.uv_run(loop, fatuv.UV_RUN_DEFAULT)
+loop.run(UV_RUN_DEFAULT)
 
