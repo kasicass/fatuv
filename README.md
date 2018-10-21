@@ -2,9 +2,9 @@
 
 ## INTRODUCTION
 
-a cffi-based libuv wrapper for python/pypy
-
-* interface inspird by [pyuv]
+* a cffi-based libuv wrapper for python/pypy
+* interface inspired by [pyuv][1]
+* benchmark inspired by [uvloop][2]
 
 ## BUILD
 
@@ -20,4 +20,5 @@ $ pypy uv-hello.py
 ```
 
 [1]: https://github.com/saghul/pyuv/
+[2]: https://github.com/MagicStack/uvloop
 
