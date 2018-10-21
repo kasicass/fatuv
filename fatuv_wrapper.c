@@ -76,3 +76,55 @@ fatuv_idle_stop(fatuv_idle_t* idle)
 	return uv_idle_stop((uv_idle_t*)idle);
 }
 
+/*
+ * timer
+ */
+
+fatuv_timer_t*
+fatuv_timer_new(void)
+{
+	return (fatuv_timer_t*)malloc(sizeof(uv_timer_t));
+}
+
+void
+fatuv_timer_delete(fatuv_timer_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* handle)
+{
+	return uv_timer_init((uv_loop_t*)loop, (uv_timer_t*)handle);
+}
+
+int
+fatuv_timer_start(fatuv_timer_t* handle, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat)
+{
+	return uv_timer_start((uv_timer_t*)handle, (uv_timer_cb)cb, timeout, repeat);
+}
+
+int
+fatuv_timer_stop(fatuv_timer_t* handle)
+{
+	return uv_timer_stop((uv_timer_t*)handle);
+}
+
+int
+fatuv_timer_again(fatuv_timer_t* handle)
+{
+	return uv_timer_again((uv_timer_t*)handle);
+}
+
+void
+fatuv_timer_set_repeat(fatuv_timer_t* handle, uint64_t repeat)
+{
+	uv_timer_set_repeat((uv_timer_t*)handle, repeat);
+}
+
+uint64_t
+fatuv_timer_get_repeat(const fatuv_timer_t* handle)
+{
+	return uv_timer_get_repeat((uv_timer_t*)handle);
+}
+

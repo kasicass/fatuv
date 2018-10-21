@@ -3,8 +3,10 @@
 
 typedef void fatuv_loop_t;
 typedef void fatuv_idle_t;
+typedef void fatuv_timer_t;
 
 typedef void (*fatuv_idle_cb)(fatuv_idle_t* handle);
+typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 
 /* loop */
 typedef enum {
@@ -29,5 +31,16 @@ void fatuv_idle_delete(fatuv_idle_t* idle);
 int fatuv_idle_init(fatuv_loop_t* loop, fatuv_idle_t* idle);
 int fatuv_idle_start(fatuv_idle_t* idle, fatuv_idle_cb cb);
 int fatuv_idle_stop(fatuv_idle_t* idle);
+
+/* timer */
+fatuv_timer_t* fatuv_timer_new(void);
+void fatuv_timer_delete(fatuv_timer_t* handle);
+
+int fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* handle);
+int fatuv_timer_start(fatuv_timer_t* handle, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat);
+int fatuv_timer_stop(fatuv_timer_t* handle);
+int fatuv_timer_again(fatuv_timer_t* handle);
+void fatuv_timer_set_repeat(fatuv_timer_t* handle, uint64_t repeat);
+uint64_t fatuv_timer_get_repeat(const fatuv_timer_t* handle);
 
 #endif
