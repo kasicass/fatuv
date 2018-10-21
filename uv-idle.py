@@ -5,7 +5,7 @@ counter = 0
 def idle_callback(myidle):
 	global counter
 	counter += 1
-	if counter >= 100000:
+	if counter >= 1000000:
 		myidle.stop()
 
 loop = Loop.default_loop()
