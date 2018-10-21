@@ -1,8 +1,10 @@
 all: cffi-fatuv
 
 cffi-fatuv:
-	python fatuv_builder.py
-	pypy fatuv_builder.py
+	cd src && python fatuv_builder.py
+	cd src && pypy fatuv_builder.py
+	mv src/*.so ./
 
 clean:
-	rm -rf _fatuv.c *.o *.so *.pyc *.core __pycache__
+	cd src && rm -rf _fatuv.c *.o *.so
+	rm -rf *.so *.pyc *.core __pycache__
