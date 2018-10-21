@@ -8,6 +8,11 @@ include_file.close()
 data = data[48:] # remove FATUV_WRAPPER_H
 data = data[:-7] # remove #endif
 
+data += """
+extern "Python" void fatuv_idle_callback(fatuv_idle_t*);
+"""
+
+
 ffibuilder.cdef(data)
 ffibuilder.set_source("_fatuv", """
 	#include "fatuv_wrapper.h"
