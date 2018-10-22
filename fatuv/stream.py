@@ -1,5 +1,7 @@
 from _fatuv import ffi, lib
 from .handle import Handle
+from .error import StreamError
+from .internal import get_strerror
 
 uv_listen = lib.fatuv_listen
 uv_accept = lib.fatuv_accept
@@ -36,4 +38,13 @@ class Stream(Handle):
 		callback = self.conn_callback
 		if callback:
 			callback(self, status)
+
+	def accept(self, client):
+		if not isinstance(client, Stream):
+			raise TypeError("Only stream objects are supported for accept")
+
+		assert self.handle
+		err = uv_accept(self.handle, client.handle)
+		if err < 0:
+			raise StreamError((err, get_strerror))
 
