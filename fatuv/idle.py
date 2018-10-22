@@ -27,7 +27,7 @@ class Idle(Handle):
 		self.idle_callback = None
 
 	def _dispose(self):
-		hanle = self.handle
+		handle = self.handle
 		assert handle
 
 		Idle.idle_instances.pop(handle, None)
