@@ -138,6 +138,27 @@ fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port)
 	return uv_tcp_bind((uv_tcp_t*)handle, (const struct sockaddr*)&addr, 0);
 }
 
+int
+fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port)
+{
+	// ip = char[16]
+	int err, namelen;
+	struct sockaddr_storage peername;
+	struct sockaddr_in *addr4;
+
+	namelen = sizeof(peername);
+
+	err = uv_tcp_getpeername((uv_tcp_t*)handle, (struct sockaddr *)&peername, &namelen);
+	if (err < 0) {
+		return err;
+	}
+
+	addr4 = (struct sockaddr_in*)&peername;
+	uv_ip4_name(addr4, ip, INET_ADDRSTRLEN); // INET_ADDRSTRLEN = 16
+	*port = ntohs(addr4->sin_port);
+	return 0;
+}
+
 /*
  * idle
  */

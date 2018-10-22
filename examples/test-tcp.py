@@ -8,7 +8,7 @@ def on_connection(server, status):
 	print 'on_connection'
 	client = fatuv.TCP(loop)
 	server.accept(client)
-	# print 'client:', client.getpeername()
+	print 'client:', client.getpeername()
 
 def signal_cb(handle, signum):
 	signal_h.stop()

@@ -72,6 +72,7 @@ int fatuv_tcp_init(fatuv_loop_t* loop, fatuv_tcp_t* handle);
 int fatuv_tcp_nodelay(fatuv_tcp_t* handle, int enable);
 int fatuv_tcp_keepalive(fatuv_tcp_t* handle, int enable, unsigned int delay);
 int fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port);
+int fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port);
 
 /*
  * idle
