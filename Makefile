@@ -1,7 +1,10 @@
-all: cffi-fatuv
+all: py2 pypy
 
-cffi-fatuv:
+py2:
 	cd src && python fatuv_builder.py
+	mv src/*.so ./
+
+pypy:
 	cd src && pypy fatuv_builder.py
 	mv src/*.so ./
 
