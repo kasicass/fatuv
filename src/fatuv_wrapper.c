@@ -105,19 +105,16 @@ fatuv_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 	buf->len  = sizeof(slab);
 }
 
-static void
-fatuv_read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
-{
-}
-
 int
 fatuv_read_start(fatuv_stream_t* stream, fatuv_read_cb read_cb)
 {
+	return uv_read_start((uv_stream_t*)stream, fatuv_alloc_cb, (uv_read_cb)read_cb);
 }
 
 int
 fatuv_read_stop(fatuv_stream_t* stream)
 {
+	return uv_read_stop((uv_stream_t*)stream);
 }
 
 /*

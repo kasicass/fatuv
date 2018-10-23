@@ -4,5 +4,5 @@ from .idle import *
 from .timer import *
 from .signal import *
 
-__version__ = '0.1.0'
+__version__ = '1.19.1' # same as libuv
 

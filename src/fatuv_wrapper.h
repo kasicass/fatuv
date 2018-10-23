@@ -1,6 +1,11 @@
 #ifndef FATUV_WRAPPER_H
 #define FATUV_WRAPPER_H
 
+typedef struct fatuv_buf_t {
+  char* base;
+  size_t len;
+} fatuv_buf_t;
+
 typedef void fatuv_loop_t;
 typedef void fatuv_handle_t;
 typedef void fatuv_stream_t;
@@ -14,7 +19,7 @@ typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
 typedef void (*fatuv_idle_cb)(fatuv_idle_t* handle);
 typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
-typedef void (*fatuv_read_cb)(uv_stream_t* stream, const char* buf, ssize_t nread);
+typedef void (*fatuv_read_cb)(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
 
 /*
  * misc
@@ -57,8 +62,8 @@ int fatuv_fileno(const fatuv_handle_t* handle, int* fd);
  * buf
  */
 
-fatuv_buf_t* fatuv_buf_new(void);
-void fatuv_buf_delete(fatuv_buf_t* buf);
+// fatuv_buf_t* fatuv_buf_new(void);
+// void fatuv_buf_delete(fatuv_buf_t* buf);
 
 /*
  * stream
