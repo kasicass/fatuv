@@ -183,16 +183,35 @@ fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port)
  * idle
  */
 
+typedef struct fatuv_idle_internal_s {
+	uv_idle_t handle;
+	void* pyobj;
+} fatuv_idle_internal_t;
+
 fatuv_idle_t*
 fatuv_idle_new(void)
 {
-	return (fatuv_idle_t*)malloc(sizeof(uv_idle_t));
+	return (fatuv_idle_t*)calloc(1, sizeof(fatuv_idle_internal_t));
 }
 
 void
 fatuv_idle_delete(fatuv_idle_t* idle)
 {
 	free(idle);
+}
+
+void
+fatuv_idle_set_pyobj(fatuv_idle_t* idle, void* obj)
+{
+	fatuv_idle_internal_t* self = (fatuv_idle_internal_t*)idle;
+	self->pyobj = obj;
+}
+
+void*
+fatuv_idle_get_pyobj(fatuv_idle_t* idle)
+{
+	fatuv_idle_internal_t* self = (fatuv_idle_internal_t*)idle;
+	return self->pyobj;
 }
 
 int
