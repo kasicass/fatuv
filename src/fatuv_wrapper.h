@@ -14,6 +14,7 @@ typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
 typedef void (*fatuv_idle_cb)(fatuv_idle_t* handle);
 typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
+typedef void (*fatuv_read_cb)(uv_stream_t* stream, const char* buf, ssize_t nread);
 
 /*
  * misc
@@ -52,12 +53,23 @@ int fatuv_send_buffer_size(fatuv_handle_t* handle, int* value);
 int fatuv_recv_buffer_size(fatuv_handle_t* handle, int* value);
 int fatuv_fileno(const fatuv_handle_t* handle, int* fd);
 
-/* stream */
+/*
+ * buf
+ */
+
+fatuv_buf_t* fatuv_buf_new(void);
+void fatuv_buf_delete(fatuv_buf_t* buf);
+
+/*
+ * stream
+ */
+
 int fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb);
 int fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client);
+int fatuv_read_start(fatuv_stream_t* stream, fatuv_read_cb read_cb);
+int fatuv_read_stop(fatuv_stream_t* stream);
+
 /*
-int fatuv_read_start(uv_stream_t*, uv_alloc_cb alloc_cb, uv_read_cb read_cb);
-int fatuv_read_stop(uv_stream_t*);
 int fatuv_write(uv_write_t* req, uv_stream_t* handle, const uv_buf_t bufs[], unsigned int nbufs, uv_write_cb cb);
 */
 

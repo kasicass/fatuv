@@ -97,6 +97,29 @@ fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client)
 	return uv_accept((uv_stream_t*)server, (uv_stream_t*)client);
 }
 
+static void
+fatuv_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
+{
+	static char slab[64*1024];
+	buf->base = slab;
+	buf->len  = sizeof(slab);
+}
+
+static void
+fatuv_read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
+{
+}
+
+int
+fatuv_read_start(fatuv_stream_t* stream, fatuv_read_cb read_cb)
+{
+}
+
+int
+fatuv_read_stop(fatuv_stream_t* stream)
+{
+}
+
 /*
  * tcp
  */

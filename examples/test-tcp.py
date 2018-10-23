@@ -11,6 +11,7 @@ def on_connection(server, status):
 	print 'client:', client.getpeername()
 
 def signal_cb(handle, signum):
+	server.close()
 	signal_h.stop()
 
 loop = fatuv.Loop.default_loop()
