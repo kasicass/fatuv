@@ -3,8 +3,10 @@ from .stream import Stream
 from .error import TCPError
 from .internal import get_strerror
 
-uv_send_buffer_size = lib.fatuv_send_buffer_size
-uv_recv_buffer_size = lib.fatuv_recv_buffer_size
+uv_get_pyobj          = lib.fatuv_get_pyobj
+uv_set_pyobj          = lib.fatuv_set_pyobj
+uv_send_buffer_size   = lib.fatuv_send_buffer_size
+uv_recv_buffer_size   = lib.fatuv_recv_buffer_size
 
 uv_tcp_new            = lib.fatuv_tcp_new
 uv_tcp_delete         = lib.fatuv_tcp_delete
@@ -23,12 +25,19 @@ class TCP(Stream):
 		handle = uv_tcp_new();
 		uv_tcp_init(loop.handle, handle)
 
+		self._userdata = ffi.new_handle(self)
+		uv_set_pyobj(handle, self._userdata)
+
 		self.handle = handle
 
 	def _dispose(self):
 		handle = self.handle
 		assert self.handle
 
+		self.handle    = None
+		self._userdata = None
+
+		uv_set_pyobj(handle, ffi.NULL)
 		uv_tcp_delete(handle)
 
 	def bind(self, addr):

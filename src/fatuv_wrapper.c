@@ -117,7 +117,7 @@ fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb)
 int
 fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client)
 {
-	return uv_accept(FAT2UV_HANDLE(uv_stream_t*, server), (uv_stream_t*)client);
+	return uv_accept(FAT2UV_HANDLE(uv_stream_t*, server), FAT2UV_HANDLE(uv_stream_t*, client));
 }
 
 static void
@@ -144,10 +144,15 @@ fatuv_read_stop(fatuv_stream_t* stream)
  * tcp
  */
 
+typedef struct fatuv_tcp_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_tcp_t handle;
+} fatuv_tcp_internal_t;
+
 fatuv_tcp_t*
 fatuv_tcp_new(void)
 {
-	return (fatuv_tcp_t*)malloc(sizeof(uv_tcp_t));
+	return (fatuv_tcp_t*)calloc(1, sizeof(fatuv_tcp_internal_t));
 }
 
 void fatuv_tcp_delete(fatuv_tcp_t* handle)
@@ -158,19 +163,19 @@ void fatuv_tcp_delete(fatuv_tcp_t* handle)
 int
 fatuv_tcp_init(fatuv_loop_t* loop, fatuv_tcp_t* handle)
 {
-	return uv_tcp_init((uv_loop_t*)loop, (uv_tcp_t*)handle);
+	return uv_tcp_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_tcp_t*, handle));
 }
 
 int
 fatuv_tcp_nodelay(fatuv_tcp_t* handle, int enable)
 {
-	return uv_tcp_nodelay((uv_tcp_t*)handle, enable);
+	return uv_tcp_nodelay(FAT2UV_HANDLE(uv_tcp_t*, handle), enable);
 }
 
 int
 fatuv_tcp_keepalive(fatuv_tcp_t* handle, int enable, unsigned int delay)
 {
-	return uv_tcp_keepalive((uv_tcp_t*)handle, enable, delay);
+	return uv_tcp_keepalive(FAT2UV_HANDLE(uv_tcp_t*, handle), enable, delay);
 }
 
 int
@@ -178,7 +183,7 @@ fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port)
 {
 	struct sockaddr_in addr;
 	uv_ip4_addr(ip, port, &addr);
-	return uv_tcp_bind((uv_tcp_t*)handle, (const struct sockaddr*)&addr, 0);
+	return uv_tcp_bind(FAT2UV_HANDLE(uv_tcp_t*, handle), (const struct sockaddr*)&addr, 0);
 }
 
 int
@@ -191,7 +196,7 @@ fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port)
 
 	namelen = sizeof(peername);
 
-	err = uv_tcp_getpeername((uv_tcp_t*)handle, (struct sockaddr *)&peername, &namelen);
+	err = uv_tcp_getpeername(FAT2UV_HANDLE(uv_tcp_t*, handle), (struct sockaddr *)&peername, &namelen);
 	if (err < 0) {
 		return err;
 	}
