@@ -123,11 +123,13 @@ uint64_t fatuv_timer_get_repeat(const fatuv_timer_t* handle);
  */
 
 fatuv_signal_t* fatuv_signal_new(void);
-void fatuv_signal_delete(fatuv_signal_t* handle);
+void fatuv_signal_delete(fatuv_signal_t* signal);
+void fatuv_signal_set_pyobj(fatuv_signal_t* signal, void* obj);
+void* fatuv_signal_get_pyobj(fatuv_signal_t* signal);
 
-int fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* handle);
-int fatuv_signal_start(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum);
-//int fatuv_signal_start_oneshot(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum);
-int fatuv_signal_stop(fatuv_signal_t* handle);
+int fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* signal);
+int fatuv_signal_start(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum);
+//int fatuv_signal_start_oneshot(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum);
+int fatuv_signal_stop(fatuv_signal_t* signal);
 
 #endif

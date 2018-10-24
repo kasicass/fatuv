@@ -288,41 +288,60 @@ fatuv_timer_get_repeat(const fatuv_timer_t* handle)
  * signal
  */
 
+typedef struct fatuv_signal_internal_s {
+	uv_signal_t handle;
+	void* pyobj;
+} fatuv_signal_internal_t;
+
 fatuv_signal_t*
 fatuv_signal_new(void)
 {
-	return (fatuv_signal_t*)malloc(sizeof(uv_signal_t));
+	return (fatuv_signal_t*)calloc(1, sizeof(fatuv_signal_internal_t));
 }
 
 void
-fatuv_signal_delete(fatuv_signal_t* handle)
+fatuv_signal_delete(fatuv_signal_t* signal)
 {
-	free(handle);
+	free(signal);
+}
+
+void
+fatuv_signal_set_pyobj(fatuv_signal_t* signal, void* obj)
+{
+	fatuv_signal_internal_t* self = (fatuv_signal_internal_t*)signal;
+	self->pyobj = obj;
+}
+
+void*
+fatuv_signal_get_pyobj(fatuv_signal_t* signal)
+{
+	fatuv_signal_internal_t* self = (fatuv_signal_internal_t*)signal;
+	return self->pyobj;
 }
 
 int
-fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* handle)
+fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* signal)
 {
-	return uv_signal_init((uv_loop_t*)loop, (uv_signal_t*)handle);
+	return uv_signal_init((uv_loop_t*)loop, (uv_signal_t*)signal);
 }
 
 int
-fatuv_signal_start(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum)
+fatuv_signal_start(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum)
 {
-	return uv_signal_start((uv_signal_t*)handle, (uv_signal_cb)signal_cb, signum);
+	return uv_signal_start((uv_signal_t*)signal, (uv_signal_cb)signal_cb, signum);
 }
 
 #if 0  // debian9.5 libuv1-dev package is too old
 int
-fatuv_signal_start_oneshot(fatuv_signal_t* handle, fatuv_signal_cb signal_cb, int signum)
+fatuv_signal_start_oneshot(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum)
 {
-	return uv_signal_start_oneshot((uv_signal_t*)handle, (uv_signal_cb)signal_cb, signum);
+	return uv_signal_start_oneshot((uv_signal_t*)signal, (uv_signal_cb)signal_cb, signum);
 }
 #endif
 
 int
-fatuv_signal_stop(fatuv_signal_t* handle)
+fatuv_signal_stop(fatuv_signal_t* signal)
 {
-	return uv_signal_stop((uv_signal_t*)handle);
+	return uv_signal_stop((uv_signal_t*)signal);
 }
 
