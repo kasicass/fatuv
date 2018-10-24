@@ -109,14 +109,16 @@ int fatuv_idle_stop(fatuv_idle_t* idle);
  */
 
 fatuv_timer_t* fatuv_timer_new(void);
-void fatuv_timer_delete(fatuv_timer_t* handle);
+void fatuv_timer_delete(fatuv_timer_t* timer);
+void fatuv_timer_set_pyobj(fatuv_timer_t* timer, void* obj);
+void* fatuv_timer_get_pyobj(fatuv_timer_t* timer);
 
-int fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* handle);
-int fatuv_timer_start(fatuv_timer_t* handle, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat);
-int fatuv_timer_stop(fatuv_timer_t* handle);
-int fatuv_timer_again(fatuv_timer_t* handle);
-void fatuv_timer_set_repeat(fatuv_timer_t* handle, uint64_t repeat);
-uint64_t fatuv_timer_get_repeat(const fatuv_timer_t* handle);
+int fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* timer);
+int fatuv_timer_start(fatuv_timer_t* timer, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat);
+int fatuv_timer_stop(fatuv_timer_t* timer);
+int fatuv_timer_again(fatuv_timer_t* timer);
+void fatuv_timer_set_repeat(fatuv_timer_t* timer, uint64_t repeat);
+uint64_t fatuv_timer_get_repeat(const fatuv_timer_t* timer);
 
 /*
  * signal

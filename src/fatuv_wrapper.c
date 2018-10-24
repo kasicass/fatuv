@@ -236,52 +236,71 @@ fatuv_idle_stop(fatuv_idle_t* idle)
  * timer
  */
 
+typedef struct fatuv_timer_internal_s {
+	uv_timer_t handle;
+	void* pyobj;
+} fatuv_timer_internal_t;
+
 fatuv_timer_t*
 fatuv_timer_new(void)
 {
-	return (fatuv_timer_t*)malloc(sizeof(uv_timer_t));
+	return (fatuv_timer_t*)malloc(sizeof(fatuv_timer_internal_t));
 }
 
 void
-fatuv_timer_delete(fatuv_timer_t* handle)
+fatuv_timer_delete(fatuv_timer_t* timer)
 {
-	free(handle);
-}
-
-int
-fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* handle)
-{
-	return uv_timer_init((uv_loop_t*)loop, (uv_timer_t*)handle);
-}
-
-int
-fatuv_timer_start(fatuv_timer_t* handle, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat)
-{
-	return uv_timer_start((uv_timer_t*)handle, (uv_timer_cb)cb, timeout, repeat);
-}
-
-int
-fatuv_timer_stop(fatuv_timer_t* handle)
-{
-	return uv_timer_stop((uv_timer_t*)handle);
-}
-
-int
-fatuv_timer_again(fatuv_timer_t* handle)
-{
-	return uv_timer_again((uv_timer_t*)handle);
+	free(timer);
 }
 
 void
-fatuv_timer_set_repeat(fatuv_timer_t* handle, uint64_t repeat)
+fatuv_timer_set_pyobj(fatuv_signal_t* timer, void* obj)
 {
-	uv_timer_set_repeat((uv_timer_t*)handle, repeat);
+	fatuv_timer_internal_t* self = (fatuv_timer_internal_t*)timer;
+	self->pyobj = obj;
+}
+
+void*
+fatuv_timer_get_pyobj(fatuv_timer_t* timer)
+{
+	fatuv_timer_internal_t* self = (fatuv_timer_internal_t*)timer;
+	return self->pyobj;
+}
+
+int
+fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* timer)
+{
+	return uv_timer_init((uv_loop_t*)loop, (uv_timer_t*)timer);
+}
+
+int
+fatuv_timer_start(fatuv_timer_t* timer, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat)
+{
+	return uv_timer_start((uv_timer_t*)timer, (uv_timer_cb)cb, timeout, repeat);
+}
+
+int
+fatuv_timer_stop(fatuv_timer_t* timer)
+{
+	return uv_timer_stop((uv_timer_t*)timer);
+}
+
+int
+fatuv_timer_again(fatuv_timer_t* timer)
+{
+	return uv_timer_again((uv_timer_t*)timer);
+}
+
+void
+fatuv_timer_set_repeat(fatuv_timer_t* timer, uint64_t repeat)
+{
+	uv_timer_set_repeat((uv_timer_t*)timer, repeat);
 }
 
 uint64_t
-fatuv_timer_get_repeat(const fatuv_timer_t* handle)
+fatuv_timer_get_repeat(const fatuv_timer_t* timer)
 {
-	return uv_timer_get_repeat((uv_timer_t*)handle);
+	return uv_timer_get_repeat((uv_timer_t*)timer);
 }
 
 /*

@@ -35,7 +35,8 @@ class Idle(Handle):
 		assert handle
 
 		self.idle_callback = None
-		self.handle = None
+		self.handle        = None
+		self._userdata     = None
 
 		uv_idle_set_pyobj(handle, ffi.NULL)
 		uv_idle_delete(handle)
@@ -56,6 +57,5 @@ class Idle(Handle):
 		assert handle
 
 		uv_idle_stop(handle)
-
 		self.idle_callback = None
 
