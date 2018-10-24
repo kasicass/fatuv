@@ -2,6 +2,10 @@
 #include <uv.h>
 #include "fatuv_wrapper.h"
 
+#define FATUV_PYOBJ_FIELDS void* pyobj
+#define FAT2UV_HANDLE(type, ptr) ((type)(ptr + sizeof(void*)))
+#define UV2FAT_HANDLE(type, ptr) ((type)(ptr - sizeof(void*)))
+
 /*
  * loop
  */
@@ -45,40 +49,59 @@ fatuv_run(fatuv_loop_t* loop, fatuv_run_mode mode)
 /*
  * handle
  */
+
+typedef struct fatuv_handle_internal_s {
+	FATUV_PYOBJ_FIELDS;
+} fatuv_handle_internal_t;
+
+void
+fatuv_set_pyobj(fatuv_handle_t* handle, void* obj)
+{
+	fatuv_handle_internal_t* self = (fatuv_handle_internal_t*)handle;
+	self->pyobj = obj;
+}
+
+void*
+fatuv_get_pyobj(fatuv_handle_t* handle)
+{
+	fatuv_handle_internal_t* self = UV2FAT_HANDLE(fatuv_handle_internal_t*, handle);
+	return self->pyobj;
+}
+
 void
 fatuv_close(fatuv_handle_t* handle, fatuv_close_cb close_cb)
 {
-	uv_close((uv_handle_t*)handle, (uv_close_cb)close_cb);
+	uv_close(FAT2UV_HANDLE(uv_handle_t*, handle), (uv_close_cb)close_cb);
 }
 
 int
 fatuv_is_active(const fatuv_handle_t* handle)
 {
-	return uv_is_active((const uv_handle_t*)handle);
+	return uv_is_active(FAT2UV_HANDLE(const uv_handle_t*, handle));
 }
 
 int
 fatuv_is_closing(const fatuv_handle_t* handle)
 {
-	return uv_is_closing((const uv_handle_t*)handle);
+	return uv_is_closing(FAT2UV_HANDLE(const uv_handle_t*, handle));
 }
 
 int
 fatuv_send_buffer_size(fatuv_handle_t* handle, int* value)
 {
-	return uv_send_buffer_size((uv_handle_t*)handle, value);
+	return uv_send_buffer_size(FAT2UV_HANDLE(uv_handle_t*, handle), value);
 }
 
 int
 fatuv_recv_buffer_size(fatuv_handle_t* handle, int* value)
 {
-	return uv_recv_buffer_size((uv_handle_t*)handle, value);
+	return uv_recv_buffer_size(FAT2UV_HANDLE(uv_handle_t*, handle), value);
 }
 
 int
 fatuv_fileno(const fatuv_handle_t* handle, int* fd)
 {
-	return uv_fileno((uv_handle_t*)handle, fd);
+	return uv_fileno(FAT2UV_HANDLE(uv_handle_t*, handle), fd);
 }
 
 /*
@@ -88,13 +111,13 @@ fatuv_fileno(const fatuv_handle_t* handle, int* fd)
 int
 fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb)
 {
-	return uv_listen((uv_stream_t*)stream, backlog, (uv_connection_cb)cb);
+	return uv_listen(FAT2UV_HANDLE(uv_stream_t*, stream), backlog, (uv_connection_cb)cb);
 }
 
 int
 fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client)
 {
-	return uv_accept((uv_stream_t*)server, (uv_stream_t*)client);
+	return uv_accept(FAT2UV_HANDLE(uv_stream_t*, server), (uv_stream_t*)client);
 }
 
 static void
@@ -108,13 +131,13 @@ fatuv_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 int
 fatuv_read_start(fatuv_stream_t* stream, fatuv_read_cb read_cb)
 {
-	return uv_read_start((uv_stream_t*)stream, fatuv_alloc_cb, (uv_read_cb)read_cb);
+	return uv_read_start(FAT2UV_HANDLE(uv_stream_t*, stream), fatuv_alloc_cb, (uv_read_cb)read_cb);
 }
 
 int
 fatuv_read_stop(fatuv_stream_t* stream)
 {
-	return uv_read_stop((uv_stream_t*)stream);
+	return uv_read_stop(FAT2UV_HANDLE(uv_stream_t*, stream));
 }
 
 /*
@@ -183,9 +206,10 @@ fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port)
  * idle
  */
 
+// pyobj should be in the first field
 typedef struct fatuv_idle_internal_s {
+	FATUV_PYOBJ_FIELDS;
 	uv_idle_t handle;
-	void* pyobj;
 } fatuv_idle_internal_t;
 
 fatuv_idle_t*
@@ -200,36 +224,22 @@ fatuv_idle_delete(fatuv_idle_t* idle)
 	free(idle);
 }
 
-void
-fatuv_idle_set_pyobj(fatuv_idle_t* idle, void* obj)
-{
-	fatuv_idle_internal_t* self = (fatuv_idle_internal_t*)idle;
-	self->pyobj = obj;
-}
-
-void*
-fatuv_idle_get_pyobj(fatuv_idle_t* idle)
-{
-	fatuv_idle_internal_t* self = (fatuv_idle_internal_t*)idle;
-	return self->pyobj;
-}
-
 int
 fatuv_idle_init(fatuv_loop_t* loop, fatuv_idle_t* idle)
 {
-	return uv_idle_init((uv_loop_t*)loop, (uv_idle_t*)idle);
+	return uv_idle_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_idle_t*, idle));
 }
 
 int
 fatuv_idle_start(fatuv_idle_t* idle, fatuv_idle_cb cb)
 {
-	return uv_idle_start((uv_idle_t*)idle, (uv_idle_cb)cb);
+	return uv_idle_start(FAT2UV_HANDLE(uv_idle_t*, idle), (uv_idle_cb)cb);
 }
 
 int
 fatuv_idle_stop(fatuv_idle_t* idle)
 {
-	return uv_idle_stop((uv_idle_t*)idle);
+	return uv_idle_stop(FAT2UV_HANDLE(uv_idle_t*, idle));
 }
 
 /*
@@ -237,14 +247,14 @@ fatuv_idle_stop(fatuv_idle_t* idle)
  */
 
 typedef struct fatuv_timer_internal_s {
+	FATUV_PYOBJ_FIELDS;
 	uv_timer_t handle;
-	void* pyobj;
 } fatuv_timer_internal_t;
 
 fatuv_timer_t*
 fatuv_timer_new(void)
 {
-	return (fatuv_timer_t*)malloc(sizeof(fatuv_timer_internal_t));
+	return (fatuv_timer_t*)calloc(1, sizeof(fatuv_timer_internal_t));
 }
 
 void
@@ -253,54 +263,40 @@ fatuv_timer_delete(fatuv_timer_t* timer)
 	free(timer);
 }
 
-void
-fatuv_timer_set_pyobj(fatuv_signal_t* timer, void* obj)
-{
-	fatuv_timer_internal_t* self = (fatuv_timer_internal_t*)timer;
-	self->pyobj = obj;
-}
-
-void*
-fatuv_timer_get_pyobj(fatuv_timer_t* timer)
-{
-	fatuv_timer_internal_t* self = (fatuv_timer_internal_t*)timer;
-	return self->pyobj;
-}
-
 int
 fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* timer)
 {
-	return uv_timer_init((uv_loop_t*)loop, (uv_timer_t*)timer);
+	return uv_timer_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_timer_t*, timer));
 }
 
 int
 fatuv_timer_start(fatuv_timer_t* timer, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat)
 {
-	return uv_timer_start((uv_timer_t*)timer, (uv_timer_cb)cb, timeout, repeat);
+	return uv_timer_start(FAT2UV_HANDLE(uv_timer_t*, timer), (uv_timer_cb)cb, timeout, repeat);
 }
 
 int
 fatuv_timer_stop(fatuv_timer_t* timer)
 {
-	return uv_timer_stop((uv_timer_t*)timer);
+	return uv_timer_stop(FAT2UV_HANDLE(uv_timer_t*, timer));
 }
 
 int
 fatuv_timer_again(fatuv_timer_t* timer)
 {
-	return uv_timer_again((uv_timer_t*)timer);
+	return uv_timer_again(FAT2UV_HANDLE(uv_timer_t*, timer));
 }
 
 void
 fatuv_timer_set_repeat(fatuv_timer_t* timer, uint64_t repeat)
 {
-	uv_timer_set_repeat((uv_timer_t*)timer, repeat);
+	uv_timer_set_repeat(FAT2UV_HANDLE(uv_timer_t*, timer), repeat);
 }
 
 uint64_t
 fatuv_timer_get_repeat(const fatuv_timer_t* timer)
 {
-	return uv_timer_get_repeat((uv_timer_t*)timer);
+	return uv_timer_get_repeat(FAT2UV_HANDLE(uv_timer_t*, timer));
 }
 
 /*
@@ -308,8 +304,8 @@ fatuv_timer_get_repeat(const fatuv_timer_t* timer)
  */
 
 typedef struct fatuv_signal_internal_s {
+	FATUV_PYOBJ_FIELDS;
 	uv_signal_t handle;
-	void* pyobj;
 } fatuv_signal_internal_t;
 
 fatuv_signal_t*
@@ -324,43 +320,29 @@ fatuv_signal_delete(fatuv_signal_t* signal)
 	free(signal);
 }
 
-void
-fatuv_signal_set_pyobj(fatuv_signal_t* signal, void* obj)
-{
-	fatuv_signal_internal_t* self = (fatuv_signal_internal_t*)signal;
-	self->pyobj = obj;
-}
-
-void*
-fatuv_signal_get_pyobj(fatuv_signal_t* signal)
-{
-	fatuv_signal_internal_t* self = (fatuv_signal_internal_t*)signal;
-	return self->pyobj;
-}
-
 int
 fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* signal)
 {
-	return uv_signal_init((uv_loop_t*)loop, (uv_signal_t*)signal);
+	return uv_signal_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_signal_t*, signal));
 }
 
 int
 fatuv_signal_start(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum)
 {
-	return uv_signal_start((uv_signal_t*)signal, (uv_signal_cb)signal_cb, signum);
+	return uv_signal_start(FAT2UV_HANDLE(uv_signal_t*, signal), (uv_signal_cb)signal_cb, signum);
 }
 
 #if 0  // debian9.5 libuv1-dev package is too old
 int
 fatuv_signal_start_oneshot(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum)
 {
-	return uv_signal_start_oneshot((uv_signal_t*)signal, (uv_signal_cb)signal_cb, signum);
+	return uv_signal_start_oneshot(FAT2UV_HANDLE(uv_signal_t*, signal), (uv_signal_cb)signal_cb, signum);
 }
 #endif
 
 int
 fatuv_signal_stop(fatuv_signal_t* signal)
 {
-	return uv_signal_stop((uv_signal_t*)signal);
+	return uv_signal_stop(FAT2UV_HANDLE(uv_signal_t*, signal));
 }
 

@@ -26,8 +26,6 @@ class TCP(Stream):
 		self.handle = handle
 
 	def _dispose(self):
-		super(TCP, self)._dispose()
-
 		handle = self.handle
 		assert self.handle
 

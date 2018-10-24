@@ -51,6 +51,9 @@ int fatuv_run(fatuv_loop_t*, fatuv_run_mode mode);
  * handle
  */
 
+void fatuv_set_pyobj(fatuv_handle_t* handle, void* obj);
+void* fatuv_get_pyobj(fatuv_handle_t* handle);
+
 void fatuv_close(fatuv_handle_t* handle, fatuv_close_cb close_cb);
 int fatuv_is_active(const fatuv_handle_t* handle);
 int fatuv_is_closing(const fatuv_handle_t* handle);
@@ -97,8 +100,6 @@ int fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port);
 
 fatuv_idle_t* fatuv_idle_new(void);
 void fatuv_idle_delete(fatuv_idle_t* idle);
-void fatuv_idle_set_pyobj(fatuv_idle_t* idle, void* obj);
-void* fatuv_idle_get_pyobj(fatuv_idle_t* idle);
 
 int fatuv_idle_init(fatuv_loop_t* loop, fatuv_idle_t* idle);
 int fatuv_idle_start(fatuv_idle_t* idle, fatuv_idle_cb cb);
@@ -110,8 +111,6 @@ int fatuv_idle_stop(fatuv_idle_t* idle);
 
 fatuv_timer_t* fatuv_timer_new(void);
 void fatuv_timer_delete(fatuv_timer_t* timer);
-void fatuv_timer_set_pyobj(fatuv_timer_t* timer, void* obj);
-void* fatuv_timer_get_pyobj(fatuv_timer_t* timer);
 
 int fatuv_timer_init(fatuv_loop_t* loop, fatuv_timer_t* timer);
 int fatuv_timer_start(fatuv_timer_t* timer, fatuv_timer_cb cb, uint64_t timeout, uint64_t repeat);
@@ -126,8 +125,6 @@ uint64_t fatuv_timer_get_repeat(const fatuv_timer_t* timer);
 
 fatuv_signal_t* fatuv_signal_new(void);
 void fatuv_signal_delete(fatuv_signal_t* signal);
-void fatuv_signal_set_pyobj(fatuv_signal_t* signal, void* obj);
-void* fatuv_signal_get_pyobj(fatuv_signal_t* signal);
 
 int fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* signal);
 int fatuv_signal_start(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum);

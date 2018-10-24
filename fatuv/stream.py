@@ -3,6 +3,9 @@ from .handle import Handle
 from .error import StreamError
 from .internal import get_strerror
 
+uv_get_pyobj  = lib.fatuv_get_pyobj
+uv_set_pyobj  = lib.fatuv_set_pyobj
+
 uv_listen     = lib.fatuv_listen
 uv_accept     = lib.fatuv_accept
 uv_read_start = lib.fatuv_read_start
@@ -12,12 +15,14 @@ __all__ = ['Stream']
 
 @ffi.def_extern()
 def fatuv_connection_callback(stream_handle, status):
-	obj = Stream.conn_instances[stream_handle]
+	ptr = uv_get_pyobj(stream_handle)
+	obj = ffi.from_handle(ptr)
 	obj._call_conn_callback(status)
 
 @ffi.def_extern()
 def fatuv_read_callback(stream_handle, nread, buf):
-	obj  = Stream.read_instances[stream_handle]
+	ptr = uv_get_pyobj(stream_handle)
+	obj = ffi.from_handle(ptr)
 	if nread < 0:
 		obj._call_read_callback(None, nread)
 	elif nread > 0:
@@ -27,27 +32,15 @@ def fatuv_read_callback(stream_handle, nread, buf):
 		obj._call_read_callback(None, nread)
 
 class Stream(Handle):
-	conn_instances = {}
-	read_instances = {}
-
-	def __init__(self, loop):
-		super(Stream, self).__init__(loop)
-		self.conn_callback = None
-		self.read_callback = None
-
 	def _dispose(self):
 		handle = self.handle
 		assert handle
-
-		Stream.conn_instances.pop(handle, None)
-		Stream.read_instances.pop(handle, None)
 
 	def listen(self, callback, backlog=128):
 		handle = self.handle
 		assert self.handle
 
-		self.conn_callback            = callback
-		Stream.conn_instances[handle] = self
+		self.conn_callback = callback
 		return uv_listen(handle, backlog, lib.fatuv_connection_callback)
 
 	def _call_conn_callback(self, status):
@@ -68,8 +61,7 @@ class Stream(Handle):
 		handle = self.handle
 		assert self.handle
 
-		self.read_callback            = callback
-		Stream.read_instances[handle] = self
+		self.read_callback = callback
 		return uv_read_start(handle, lib.fatuv_read_callback)
 
 	def _call_read_callback(self, data, error):

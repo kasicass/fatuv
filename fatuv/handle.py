@@ -2,6 +2,9 @@ from _fatuv import ffi, lib
 from .error import HandleError
 from .internal import get_strerror
 
+uv_get_pyobj  = lib.fatuv_get_pyobj
+uv_set_pyobj  = lib.fatuv_set_pyobj
+
 uv_close      = lib.fatuv_close
 uv_is_active  = lib.fatuv_is_active
 uv_is_closing = lib.fatuv_is_closing
@@ -11,12 +14,11 @@ __all__ = ['Handle',]
 
 @ffi.def_extern()
 def fatuv_close_callback(handle):
-	handle = Handle.closing_instances[handle]
-	handle._call_close_callback()
+	ptr = uv_get_pyobj(handle)
+	obj = ffi.from_handle(ptr)
+	obj._call_close_callback()
 
 class Handle(object):
-	closing_instances = {}
-
 	def __init__(self, loop):
 		self.loop           = loop
 		self.handle         = None       # initialize by derived class
@@ -25,7 +27,6 @@ class Handle(object):
 	def close(self, callback=None):
 		assert self.handle
 		self.close_callback = callback
-		Handle.closing_instances[self.handle] = self
 		uv_close(self.handle, lib.fatuv_close_callback)
 
 	def _call_close_callback(self):
