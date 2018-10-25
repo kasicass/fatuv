@@ -141,6 +141,56 @@ fatuv_read_stop(fatuv_stream_t* stream)
 }
 
 /*
+ * stream-write
+ */
+
+typedef struct fatuv_write_ctx_s {
+	uv_write_t req;
+	fatuv_stream_t* fatstream;
+	fatuv_write_cb callback;
+} fatuv_write_ctx_t;
+
+static fatuv_write_ctx_t*
+fatuv_write_ctx_new(void)
+{
+	return (fatuv_write_ctx_t*)calloc(1, sizeof(fatuv_write_ctx_t));
+}
+
+static void
+fatuv_write_ctx_delete(fatuv_write_ctx_t* ctx)
+{
+	free(ctx);
+}
+
+void
+fatuv_write_callback_internal(uv_write_t *req, int status)
+{
+	fatuv_write_ctx_t *ctx;
+
+	ctx = (fatuv_write_ctx_t*)req;
+	ctx->callback(ctx->fatstream, status);
+
+	fatuv_write_ctx_delete(ctx);
+}
+
+int
+fatuv_write(fatuv_stream_t* fatstream, char* buf, unsigned int bufsz, fatuv_write_cb cb)
+{
+	uv_stream_t* stream;
+	fatuv_write_ctx_t *ctx;
+	uv_buf_t wrbuf;
+	
+	stream = FAT2UV_HANDLE(uv_stream_t*, fatstream);
+	ctx = fatuv_write_ctx_new();
+
+	ctx->fatstream = fatstream;
+	ctx->callback  = cb;
+
+	wrbuf = uv_buf_init(buf, bufsz);
+	return uv_write((uv_write_t*)ctx, stream, &wrbuf, 1, fatuv_write_callback_internal);
+}
+
+/*
  * tcp
  */
 

@@ -20,6 +20,7 @@ typedef void (*fatuv_idle_cb)(fatuv_idle_t* handle);
 typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
 typedef void (*fatuv_read_cb)(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
+typedef void (*fatuv_write_cb)(fatuv_stream_t* stream, int status);
 
 /*
  * misc
@@ -76,6 +77,9 @@ int fatuv_listen(fatuv_stream_t* stream, int backlog, fatuv_connection_cb cb);
 int fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client);
 int fatuv_read_start(fatuv_stream_t* stream, fatuv_read_cb read_cb);
 int fatuv_read_stop(fatuv_stream_t* stream);
+
+int fatuv_write(fatuv_stream_t* stream, char* buf, unsigned int bufsz, fatuv_write_cb cb);
+// int fatuv_write(fatuv_stream_t* stream, const fatuv_buf_t bufs[], unsigned int nbufs, fatuv_write_cb cb);
 
 /*
 int fatuv_write(uv_write_t* req, uv_stream_t* handle, const uv_buf_t bufs[], unsigned int nbufs, uv_write_cb cb);

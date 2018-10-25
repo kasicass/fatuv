@@ -15,6 +15,7 @@ extern "Python" void fatuv_idle_callback(fatuv_idle_t*);
 extern "Python" void fatuv_timer_callback(fatuv_timer_t*);
 extern "Python" void fatuv_signal_callback(fatuv_signal_t*, int signum);
 extern "Python" void fatuv_read_callback(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
+extern "Python" void fatuv_write_callback(fatuv_stream_t* stream, int status);
 """
 
 
