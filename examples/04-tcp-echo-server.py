@@ -24,7 +24,7 @@ def signal_cb(handle, signum):
 	signal_h.close()
 	server.close()
 
-print "PyUV version", fatuv.__version__
+print "FatUV version", fatuv.__version__
 
 loop = fatuv.Loop.default_loop()
 clients = []

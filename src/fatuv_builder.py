@@ -23,7 +23,7 @@ ffibuilder.cdef(data)
 ffibuilder.set_source("_fatuv", """
 	#include "fatuv_wrapper.h"
 """,
-	extra_compile_args=['-g'],
+#	extra_compile_args=['-g'],
 	include_dirs=['/usr/local/include'],
 	library_dirs=['/usr/local/lib'],
 	sources=['fatuv_wrapper.c'],
