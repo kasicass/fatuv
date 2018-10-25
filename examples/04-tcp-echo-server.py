@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 sys.path.append('.')
 
@@ -6,7 +7,7 @@ import fatuv
 
 def on_read(client, data, error):
 	if data is None:
-		print 'client closed:', client.getpeername()
+		print('client closed:', client.getpeername())
 		client.close()
 		clients.remove(client)
 		return
@@ -17,14 +18,14 @@ def on_connection(server, error):
 	server.accept(client)
 	clients.append(client)
 	client.start_read(on_read)
-	print 'new client from:', client.getpeername()
+	print('new client from:', client.getpeername())
 
 def signal_cb(handle, signum):
 	[c.close() for c in clients]
 	signal_h.close()
 	server.close()
 
-print "FatUV version", fatuv.__version__
+print("FatUV version", fatuv.__version__)
 
 loop = fatuv.Loop.default_loop()
 clients = []
@@ -37,5 +38,5 @@ signal_h = fatuv.Signal(loop)
 signal_h.start(signal_cb, signal.SIGINT)
 
 loop.run()
-print "Stopped!"
+print("Stopped!")
 
