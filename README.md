@@ -23,10 +23,10 @@ $ pypy examples/08-timer.py
 aptitude install make gcc libuv1-dev pypy pypy-dev
 ```
 
-## OpenBSD 6.3
+## OpenBSD 6.4
 
 ```
-pkg_add -v pypy
+pkg_add -v pypy libuv
 ```
 
 
