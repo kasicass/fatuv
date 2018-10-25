@@ -11,7 +11,7 @@ counter = 0
 def repeat_callback(handle):
 	global counter
 	counter += 1	
-	if counter < 20:
+	if counter < 10:
 		print('repeat counter = %d, %s' % (counter, time.strftime('%H:%M:%S')))
 	else:
 		handle.stop()
@@ -19,10 +19,11 @@ def repeat_callback(handle):
 def timer_callback(handle):
 	global counter
 	counter += 1
-	if counter < 10:
+	if counter < 5:
 		print('counter = %d, %s' % (counter, time.strftime('%H:%M:%S')))
 	else:
-		handle.callback = repeat_callback
+		print('try again()')
+		handle.timer_callback = repeat_callback
 		handle.repeat   = 3.5 # 3.5s
 		handle.again()
 
