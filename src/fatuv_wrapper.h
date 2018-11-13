@@ -1,10 +1,16 @@
 #ifndef FATUV_WRAPPER_H
 #define FATUV_WRAPPER_H
 
-typedef struct fatuv_buf_t {
+typedef struct fatuv_buf_s {
   char* base;
   size_t len;
 } fatuv_buf_t;
+
+typedef struct fatuv_addrinfo_s {
+	int family;
+	int socktype;
+	int proto;
+} fatuv_addrinfo_t;
 
 typedef void fatuv_loop_t;
 typedef void fatuv_handle_t;
@@ -13,6 +19,7 @@ typedef void fatuv_tcp_t;
 typedef void fatuv_idle_t;
 typedef void fatuv_timer_t;
 typedef void fatuv_signal_t;
+typedef void fatuv_getaddrinfo_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -21,6 +28,7 @@ typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
 typedef void (*fatuv_read_cb)(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
 typedef void (*fatuv_write_cb)(fatuv_stream_t* stream, int status);
+typedef void (*fatuv_getaddrinfo_cb)(fatuv_addrinfo_t* result, int status);
 
 /*
  * misc
@@ -134,5 +142,11 @@ int fatuv_signal_init(fatuv_loop_t* loop, fatuv_signal_t* signal);
 int fatuv_signal_start(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum);
 //int fatuv_signal_start_oneshot(fatuv_signal_t* signal, fatuv_signal_cb signal_cb, int signum);
 int fatuv_signal_stop(fatuv_signal_t* signal);
+
+/*
+ * dns
+ */
+
+int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
 
 #endif

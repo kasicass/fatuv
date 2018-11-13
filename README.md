@@ -20,7 +20,8 @@ $ pypy examples/08-timer.py
 ## Debian 9.5
 
 ```
-aptitude install make gcc libuv1-dev pypy pypy-dev
+aptitude install make gcc libuv1-dev
+aptitude install python-dev python3-dev pypy pypy-dev
 ```
 
 ## OpenBSD 6.4

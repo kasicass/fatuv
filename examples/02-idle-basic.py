@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 sys.path.append('.')
 
@@ -16,8 +17,8 @@ loop = Loop.default_loop()
 myidle = Idle(loop)
 myidle.start(idle_callback)
 
-print 'Idling...'
+print('Idling...')
 loop.run()
 
-print 'counter =', counter
+print('counter =', counter)
 
