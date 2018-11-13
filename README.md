@@ -26,7 +26,7 @@ aptitude install make gcc libuv1-dev pypy pypy-dev
 ## OpenBSD 6.4
 
 ```
-pkg_add -v pypy libuv
+pkg_add -v pypy libuv gmake
 ```
 
 
