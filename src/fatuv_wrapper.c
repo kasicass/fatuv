@@ -183,7 +183,7 @@ fatuv_write(fatuv_stream_t* fatstream, char* buf, unsigned int bufsz, fatuv_writ
 	stream = FAT2UV_HANDLE(uv_stream_t*, fatstream);
 	ctx = fatuv_write_ctx_new();
 
-	ctx->fatstream = fatstream;
+	ctx->fatstream = stream;
 	ctx->callback  = cb;
 
 	wrbuf = uv_buf_init(buf, bufsz);

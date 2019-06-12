@@ -34,9 +34,9 @@ def fatuv_read_callback(stream_handle, nread, buf):
 
 @ffi.def_extern()
 def fatuv_write_callback(stream_handle, status):
-	# ptr = uv_get_pyobj(stream_handle)
-	# obj = ffi.from_handle(ptr) # TODO(kasicass): crash here
-	pass
+	ptr = uv_get_pyobj(stream_handle)
+	obj = ffi.from_handle(ptr)
+	obj._call_write_callback(status)
 
 class Stream(Handle):
 	def _dispose(self):
@@ -79,6 +79,11 @@ class Stream(Handle):
 	def write(self, data, callback=None):
 		handle = self.handle
 		assert self.handle
-
+		self.write_callback = callback
 		uv_write(handle, data, len(data), lib.fatuv_write_callback)
+
+	def _call_write_callback(self, status):
+		callback = self.write_callback
+		if callback:
+			callback(self, status)
 		
