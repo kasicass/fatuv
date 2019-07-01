@@ -1,7 +1,6 @@
 from .loop import *
 from .tcp import *
 from .handles import *
-from .signal import *
 from .common import *
 from .error import *
 

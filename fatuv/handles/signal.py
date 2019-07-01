@@ -1,5 +1,6 @@
 from _fatuv import ffi, lib
-from .handle import Handle
+from ..handle import Handle
+from .. import error
 
 uv_get_pyobj       = lib.fatuv_get_pyobj
 uv_set_pyobj       = lib.fatuv_set_pyobj
@@ -46,6 +47,9 @@ class Signal(Handle):
 		handle = self.handle
 		assert handle
 
+		if self.closing:
+			raise error.HandleClosedError()
+
 		self.signal_callback = callback
 		uv_signal_start(handle, lib.fatuv_signal_callback, signum)
 
@@ -66,7 +70,9 @@ class Signal(Handle):
 		handle = self.handle
 		assert handle
 
+		if self.closing:
+			return
+
 		uv_signal_stop(handle)
 
 		self.signal_callback = None
-
