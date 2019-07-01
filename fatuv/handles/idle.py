@@ -52,7 +52,9 @@ class Idle(Handle):
 			raise error.HandleClosedError()
 
 		self.idle_callback = callback
-		uv_idle_start(handle, lib.fatuv_idle_callback)  # TODO: check return value
+		code = uv_idle_start(handle, lib.fatuv_idle_callback)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 
 	def _call_idle_callback(self):
 		if self.idle_callback:
@@ -62,6 +64,8 @@ class Idle(Handle):
 		handle = self.handle
 		assert handle
 
-		uv_idle_stop(handle)
+		code = uv_idle_stop(handle)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 		self.idle_callback = None
 

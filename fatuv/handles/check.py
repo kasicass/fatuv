@@ -16,51 +16,55 @@ __all__ = ['Check']
 
 @ffi.def_extern()
 def fatuv_check_callback(check_handle):
-    ptr = uv_get_pyobj(check_handle)
-    obj = ffi.from_handle(ptr)
-    obj._call_check_callback()
+	ptr = uv_get_pyobj(check_handle)
+	obj = ffi.from_handle(ptr)
+	obj._call_check_callback()
 
 class Check(Handle):
-    def __init__(self, loop):
-        super(Check, self).__init__(loop)
+	def __init__(self, loop):
+		super(Check, self).__init__(loop)
 
-        handle = uv_check_new()
-        uv_check_init(loop.handle, handle)
+		handle = uv_check_new()
+		uv_check_init(loop.handle, handle)
 
-        self._userdata = ffi.new_handle(self)
-        uv_set_pyobj(handle, self._userdata)
-        
-        self.handle = handle
-        self.check_callback = None
+		self._userdata = ffi.new_handle(self)
+		uv_set_pyobj(handle, self._userdata)
 
-    def _dispose(self):
-        handle = self.handle
-        assert handle
+		self.handle = handle
+		self.check_callback = None
 
-        self.check_callback = None
-        self.handle         = None
-        self._userdata      = None
-        
-        uv_set_pyobj(handle, ffi.NULL)
-        uv_check_delete(handle)
-    
-    def start(self, callback = None):
-        handle = self.handle
-        assert handle
+	def _dispose(self):
+		handle = self.handle
+		assert handle
 
-        if self.closing:
-            raise error.HandleClosedError()
+		self.check_callback = None
+		self.handle         = None
+		self._userdata      = None
 
-        self.check_callback = callback
-        uv_check_start(handle, lib.fatuv_check_callback)
-    
-    def _call_check_callback(self):
-        if self.check_callback:
-            self.check_callback(self)
+		uv_set_pyobj(handle, ffi.NULL)
+		uv_check_delete(handle)
 
-    def stop(self):
-        handle = self.handle
-        assert handle
+	def start(self, callback = None):
+		handle = self.handle
+		assert handle
 
-        uv_check_stop(handle)
-        self.check_callback = None
+		if self.closing:
+			raise error.HandleClosedError()
+
+		self.check_callback = callback
+		code = uv_check_start(handle, lib.fatuv_check_callback)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
+
+	def _call_check_callback(self):
+		if self.check_callback:
+			self.check_callback(self)
+
+	def stop(self):
+		handle = self.handle
+		assert handle
+
+		code = uv_check_stop(handle)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
+		self.check_callback = None

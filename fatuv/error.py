@@ -1,3 +1,4 @@
+STATUS_SUCCESS = 0
 
 class UVError(Exception):
 	pass

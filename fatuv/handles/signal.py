@@ -39,7 +39,7 @@ class Signal(Handle):
 
 		self.signal_callback = None
 		self.handle = None
-		
+
 		uv_set_pyobj(handle, ffi.NULL)
 		uv_signal_delete(handle)
 
@@ -51,7 +51,9 @@ class Signal(Handle):
 			raise error.HandleClosedError()
 
 		self.signal_callback = callback
-		uv_signal_start(handle, lib.fatuv_signal_callback, signum)
+		code = uv_signal_start(handle, lib.fatuv_signal_callback, signum)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 
 	def _call_signal_callback(self, signum):
 		if self.signal_callback:
@@ -73,6 +75,7 @@ class Signal(Handle):
 		if self.closing:
 			return
 
-		uv_signal_stop(handle)
-
+		code = uv_signal_stop(handle)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 		self.signal_callback = None
