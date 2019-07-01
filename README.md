@@ -37,3 +37,32 @@ pkg_add -v pypy libuv gmake
 [1]: https://github.com/saghul/pyuv/
 [2]: https://github.com/MagicStack/uvloop
 
+SCHEDULE
+
+handles (test pass)
+- [x] CHECK
+- [ ] ASYNC
+- [ ] FILE
+- [x] IDLE
+- [ ] PIPE
+- [ ] POLL
+- [x] PREPARE
+- [ ] PROCESS
+- [x] SIGNAL
+- [ ] STREAM
+- [ ] TCP
+- [x] TIMER
+- [x] TTY
+- [ ] UDP
+- [ ] FS_EVENT
+- [ ] FS_POLL
+
+requests (test pass)
+- [ ] CONNECT
+- [ ] WRITE
+- [ ] SHUTDOWN
+- [ ] FS
+- [ ] WORK
+- [ ] GETADDRINFO
+- [ ] GETNAMEINFO
+- [ ] UDP_SEND
