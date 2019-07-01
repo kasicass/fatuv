@@ -16,6 +16,9 @@ extern "Python" void fatuv_timer_callback(fatuv_timer_t*);
 extern "Python" void fatuv_signal_callback(fatuv_signal_t*, int signum);
 extern "Python" void fatuv_read_callback(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
 extern "Python" void fatuv_write_callback(fatuv_stream_t* stream, int status);
+extern "Python" void fatuv_check_callback(fatuv_check_t*);
+extern "Python" void fatuv_prepare_callback(fatuv_prepare_t*);
+extern "Python" void fatuv_walk_callback(fatuv_handle_t*,void*);
 """
 
 
@@ -24,8 +27,8 @@ ffibuilder.set_source("_fatuv", """
 	#include "fatuv_wrapper.h"
 """,
 #	extra_compile_args=['-g'],
-	include_dirs=['/usr/local/include'],
-	library_dirs=['/usr/local/lib'],
+	include_dirs=['../libuv/include'],
+	library_dirs=['../libuv/.libs'],
 	sources=['fatuv_wrapper.c'],
 	libraries=['uv'])
 

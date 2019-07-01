@@ -458,3 +458,111 @@ int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, c
 		fatuv_getaddrinfo_callback_internal, node, service, &hints);
 }
 
+/*
+ * check
+ */
+
+// pyobj should be in the first field
+typedef struct fatuv_check_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_check_t handle;
+} fatuv_check_internal_t;
+
+fatuv_check_t*
+fatuv_check_new(void)
+{
+	return (fatuv_check_t*)calloc(1, sizeof(fatuv_check_internal_t));
+}
+
+void
+fatuv_check_delete(fatuv_check_t* check)
+{
+	free(check);
+}
+
+int
+fatuv_check_init(fatuv_loop_t* loop, fatuv_check_t* check)
+{
+	return uv_check_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_check_t*, check));
+}
+
+int
+fatuv_check_start(fatuv_check_t* check, fatuv_check_cb cb)
+{
+	return uv_check_start(FAT2UV_HANDLE(uv_check_t*, check), (uv_check_cb)cb);
+}
+
+int
+fatuv_check_stop(fatuv_check_t* check)
+{
+	return uv_check_stop(FAT2UV_HANDLE(uv_check_t*, check));
+}
+
+/*
+ * walk
+ */
+
+void
+fatuv_walk(fatuv_loop_t* loop, fatuv_walk_cb cb, void* args)
+{
+	return uv_walk((uv_loop_t*)loop, (uv_walk_cb)cb, args);
+}
+
+
+/*
+ * prepare
+ */
+
+// pyobj should be in the first field
+typedef struct fatuv_prepare_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_prepare_t handle;
+} fatuv_prepare_internal_t;
+
+fatuv_prepare_t*
+fatuv_prepare_new(void)
+{
+	return (fatuv_prepare_t*)calloc(1, sizeof(fatuv_prepare_internal_t));
+}
+
+void
+fatuv_prepare_delete(fatuv_prepare_t* prepare)
+{
+	free(prepare);
+}
+
+int
+fatuv_prepare_init(fatuv_loop_t* loop, fatuv_prepare_t* prepare)
+{
+	return uv_prepare_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_prepare_t*, prepare));
+}
+
+int
+fatuv_prepare_start(fatuv_prepare_t* prepare, fatuv_prepare_cb cb)
+{
+	return uv_prepare_start(FAT2UV_HANDLE(uv_prepare_t*, prepare), (uv_prepare_cb)cb);
+}
+
+int
+fatuv_prepare_stop(fatuv_prepare_t* prepare)
+{
+	return uv_prepare_stop(FAT2UV_HANDLE(uv_prepare_t*, prepare));
+}
+
+void
+fatuv_ref(fatuv_handle_t* handle)
+{
+	uv_ref(FAT2UV_HANDLE(uv_handle_t*, handle));
+}
+
+void
+fatuv_unref(fatuv_handle_t* handle)
+{
+	uv_unref(FAT2UV_HANDLE(uv_handle_t*, handle));
+}
+
+int
+fatuv_has_ref(fatuv_handle_t* handle)
+{
+	return uv_has_ref(FAT2UV_HANDLE(uv_handle_t*, handle));
+}

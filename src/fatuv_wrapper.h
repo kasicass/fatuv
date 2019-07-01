@@ -17,6 +17,8 @@ typedef void fatuv_handle_t;
 typedef void fatuv_stream_t;
 typedef void fatuv_tcp_t;
 typedef void fatuv_idle_t;
+typedef void fatuv_check_t;
+typedef void fatuv_prepare_t;
 typedef void fatuv_timer_t;
 typedef void fatuv_signal_t;
 typedef void fatuv_getaddrinfo_t;
@@ -29,6 +31,9 @@ typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
 typedef void (*fatuv_read_cb)(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
 typedef void (*fatuv_write_cb)(fatuv_stream_t* stream, int status);
 typedef void (*fatuv_getaddrinfo_cb)(fatuv_addrinfo_t* result, int status);
+typedef void (*fatuv_check_cb)(fatuv_check_t* handle);
+typedef void (*fatuv_prepare_cb)(fatuv_prepare_t* handle);
+typedef void (*fatuv_walk_cb)(fatuv_handle_t* handle,void* args);
 
 /*
  * misc
@@ -55,6 +60,8 @@ int fatuv_loop_init(fatuv_loop_t* loop);
 int fatuv_loop_close(fatuv_loop_t* loop);
 
 int fatuv_run(fatuv_loop_t*, fatuv_run_mode mode);
+
+void fatuv_walk(fatuv_loop_t*, fatuv_walk_cb walk_cb, void*);
 
 /*
  * handle
@@ -148,5 +155,31 @@ int fatuv_signal_stop(fatuv_signal_t* signal);
  */
 
 int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
+
+/*
+ * check
+ */
+
+fatuv_check_t* fatuv_check_new(void);
+void fatuv_check_delete(fatuv_check_t* check);
+
+int fatuv_check_init(fatuv_loop_t* loop, fatuv_check_t* check);
+int fatuv_check_start(fatuv_check_t* check, fatuv_check_cb cb);
+int fatuv_check_stop(fatuv_check_t* check);
+
+/*
+ * prepare
+ */
+
+fatuv_prepare_t* fatuv_prepare_new(void);
+void fatuv_prepare_delete(fatuv_prepare_t* prepare);
+
+int fatuv_prepare_init(fatuv_loop_t* loop, fatuv_prepare_t* prepare);
+int fatuv_prepare_start(fatuv_prepare_t* prepare, fatuv_prepare_cb cb);
+int fatuv_prepare_stop(fatuv_prepare_t* prepare);
+
+void fatuv_ref(fatuv_handle_t* handle);
+void fatuv_unref(fatuv_handle_t* handle);
+int fatuv_has_ref(fatuv_handle_t* handle);
 
 #endif

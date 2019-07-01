@@ -9,6 +9,9 @@ uv_close      = lib.fatuv_close
 uv_is_active  = lib.fatuv_is_active
 uv_is_closing = lib.fatuv_is_closing
 uv_fileno     = lib.fatuv_fileno
+uv_ref		  = lib.fatuv_ref
+uv_unref	  = lib.fatuv_unref
+uv_has_ref	  = lib.fatuv_has_ref
 
 __all__ = ['Handle',]
 
@@ -23,11 +26,14 @@ class Handle(object):
 		self.loop           = loop
 		self.handle         = None       # initialize by derived class
 		self.close_callback = None
+		self.closing = False
 
 	def close(self, callback=None):
 		assert self.handle
-		self.close_callback = callback
-		uv_close(self.handle, lib.fatuv_close_callback)
+		if not self.closing:
+			self.closing = True
+			self.close_callback = callback
+			uv_close(self.handle, lib.fatuv_close_callback)
 
 	def _call_close_callback(self):
 		callback = self.close_callback
@@ -58,3 +64,18 @@ class Handle(object):
 			raise HandleError((err, get_strerror(err)))
 		return ptr[0]
 
+	def reference(self):
+		if self.closing:
+			raise error.HandleClosedError()
+		uv_ref(self.handle)
+
+	def dereference(self):
+		if self.closing:
+			raise error.HandleClosedError()
+		uv_unref(self.handle)
+
+	@property
+	def referenced(self):
+		if self.closed:
+			return False
+		return bool(uv_has_ref(self.handle))

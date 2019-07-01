@@ -5,13 +5,18 @@ sys.path.append('.')
 import signal
 import fatuv
 
+PAYLOAD_LEN_EXT16 = 0x7e
+
 def on_read(client, data, error):
 	if data is None:
 		print('client closed:', client.getpeername())
 		client.close()
 		clients.remove(client)
 		return
-	client.write(data)
+	print('on_read',data)
+	header = bytearray()
+	header.append(PAYLOAD_LEN_EXT16)
+	client.write(bytes(header))
 
 def on_connection(server, error):
 	client = fatuv.TCP(server.loop)
