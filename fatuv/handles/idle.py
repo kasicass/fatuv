@@ -1,6 +1,7 @@
 import sys
 from _fatuv import ffi, lib
-from .handle import Handle
+from ..handle import Handle
+from .. import error
 
 uv_get_pyobj    = lib.fatuv_get_pyobj
 uv_set_pyobj    = lib.fatuv_set_pyobj
@@ -46,6 +47,9 @@ class Idle(Handle):
 	def start(self, callback):
 		handle = self.handle
 		assert handle
+
+		if self.closing:
+			raise error.HandleClosedError()
 
 		self.idle_callback = callback
 		uv_idle_start(handle, lib.fatuv_idle_callback)  # TODO: check return value
