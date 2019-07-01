@@ -16,6 +16,7 @@ typedef void fatuv_loop_t;
 typedef void fatuv_handle_t;
 typedef void fatuv_stream_t;
 typedef void fatuv_tcp_t;
+typedef void fatuv_tty_t;
 typedef void fatuv_idle_t;
 typedef void fatuv_check_t;
 typedef void fatuv_prepare_t;
@@ -181,5 +182,21 @@ int fatuv_prepare_stop(fatuv_prepare_t* prepare);
 void fatuv_ref(fatuv_handle_t* handle);
 void fatuv_unref(fatuv_handle_t* handle);
 int fatuv_has_ref(fatuv_handle_t* handle);
+
+/*
+ * tty
+ */
+typedef enum {
+    FATUV_TTY_MODE_NORMAL,
+    FATUV_TTY_MODE_RAW,
+    FATUV_TTY_MODE_IO
+} fatuv_tty_mode;
+
+fatuv_tty_t* fatuv_tty_new(void);
+void fatuv_tty_delete(fatuv_tty_t* handle);
+int fatuv_tty_init(fatuv_loop_t* loop, fatuv_tty_t* handle, int fd, int readable);
+int fatuv_tty_set_mode(fatuv_tty_t* handle, fatuv_tty_mode mode);
+int fatuv_tty_reset_mode(void);
+int fatuv_tty_get_winsize(fatuv_tty_t* handle, int* c_with, int* c_height);
 
 #endif

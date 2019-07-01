@@ -566,3 +566,49 @@ fatuv_has_ref(fatuv_handle_t* handle)
 {
 	return uv_has_ref(FAT2UV_HANDLE(uv_handle_t*, handle));
 }
+
+
+/*
+ * tty
+ */
+
+typedef struct fatuv_tty_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_tty_t handle;
+} fatuv_tty_internal_t;
+
+fatuv_tty_t*
+fatuv_tty_new(void)
+{
+	return (fatuv_tty_t*)calloc(1, sizeof(fatuv_tty_internal_t));
+}
+
+void fatuv_tty_delete(fatuv_tty_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_tty_init(fatuv_loop_t* loop, fatuv_tty_t* handle, int fd, int readable)
+{
+	return uv_tty_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_tty_t*, handle), fd, readable);
+}
+
+int
+fatuv_tty_set_mode(fatuv_tty_t* handle, fatuv_tty_mode mode)
+{
+	return uv_tty_set_mode(FAT2UV_HANDLE(uv_tty_t*, handle), mode);
+}
+
+int
+fatuv_tty_reset_mode(void)
+{
+	return uv_tty_reset_mode();
+}
+
+int
+fatuv_tty_get_winsize(fatuv_tty_t* handle, int* c_with, int* c_height)
+{
+	return uv_tty_get_winsize(FAT2UV_HANDLE(uv_tty_t*, handle), c_with, c_height);
+}
+
