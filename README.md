@@ -41,7 +41,7 @@ SCHEDULE
 
 handles (test pass)
 - [x] CHECK
-- [ ] ASYNC
+- [x] ASYNC
 - [ ] FILE
 - [x] IDLE
 - [ ] PIPE
