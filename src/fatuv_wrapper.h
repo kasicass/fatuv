@@ -50,6 +50,7 @@ typedef void fatuv_getaddrinfo_t;
 typedef void fatuv_pipe_t;
 typedef void fatuv_async_t;
 typedef void fatuv_fs_poll_t;
+typedef void fatuv_fs_event_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -64,6 +65,7 @@ typedef void (*fatuv_prepare_cb)(fatuv_prepare_t* handle);
 typedef void (*fatuv_walk_cb)(fatuv_handle_t* handle,void* args);
 typedef void (*fatuv_async_cb)(fatuv_async_t* handle);
 typedef void (*fatuv_fs_poll_cb)(fatuv_fs_poll_t* handle, int stat, const fatuv_stat_t* uv_previous_stat,const fatuv_stat_t* uv_current_stat);
+typedef void (*fatuv_fs_event_cb)(fatuv_fs_event_t* handle, const char* c_filename, int events, int status);
 
 /*
  * misc
@@ -256,5 +258,28 @@ int fatuv_fs_poll_init(fatuv_loop_t* loop, fatuv_fs_poll_t* handle);
 void fatuv_fs_poll_delete(fatuv_fs_poll_t* handle);
 int fatuv_fs_poll_start(fatuv_fs_poll_t* handle, fatuv_fs_poll_cb cb, char* path, int interval);
 int fatuv_fs_poll_stop(fatuv_fs_poll_t* handle);
+
+/*
+ * fs_event
+ */
+
+typedef enum {
+    FATUV_FS_EVENTS_RENAME = 1,
+    FATUV_FS_EVENTS_CHANGE,
+    FATUV_FS_EVENTS_MODE_IO
+} fatuv_fs_events;
+
+typedef enum {
+    FATUV_FS_EVENT_FLAGS_WATCH_ENTRY = 1,
+    FATUV_FS_EVENT_FLAGS_STAT,
+    FATUV_FS_EVENT_FLAGS_RECURSIVE
+} fatuv_fs_event_flags;
+
+fatuv_fs_event_t* fatuv_fs_event_new(void);
+int fatuv_fs_event_init(fatuv_loop_t* loop, fatuv_fs_event_t* handle);
+void fatuv_fs_event_delete(fatuv_fs_event_t* handle);
+int fatuv_fs_event_start(fatuv_fs_event_t* handle, fatuv_fs_event_cb cb, char* path, unsigned int flags);
+int fatuv_fs_event_stop(fatuv_fs_event_t* handle);
+
 
 #endif
