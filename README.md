@@ -55,7 +55,7 @@ handles (test pass)
 - [x] TTY
 - [ ] UDP
 - [ ] FS_EVENT
-- [ ] FS_POLL
+- [x] FS_POLL
 
 requests (test pass)
 - [ ] CONNECT
