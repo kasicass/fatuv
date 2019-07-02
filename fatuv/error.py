@@ -57,3 +57,5 @@ class FSEventError(HandleError):
 class FSPollError(HandleError):
 	pass
 
+class ArgumentError(UVError, ValueError):
+    """ Invalid arguments. """

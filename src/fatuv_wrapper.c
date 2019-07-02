@@ -683,3 +683,42 @@ fatuv_async_send(fatuv_async_t* async)
 {
 	return uv_async_send(FAT2UV_HANDLE(uv_async_t*, async));
 }
+
+/*
+ * fs_poll
+ */
+
+// pyobj should be in the first field
+typedef struct fatuv_fs_poll_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_fs_poll_t handle;
+} fatuv_fs_poll_internal_t;
+
+fatuv_fs_poll_t* fatuv_fs_poll_new(void)
+{
+	return (fatuv_fs_poll_t*)calloc(1, sizeof(fatuv_fs_poll_internal_t));
+}
+
+int
+fatuv_fs_poll_init(fatuv_loop_t* loop, fatuv_fs_poll_t* handle)
+{
+	return uv_fs_poll_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_fs_poll_t*, handle));
+}
+
+void
+fatuv_fs_poll_delete(fatuv_fs_poll_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_fs_poll_start(fatuv_fs_poll_t* handle, fatuv_fs_poll_cb cb, char* path, int interval)
+{
+	return uv_fs_poll_start(FAT2UV_HANDLE(uv_fs_poll_t*, handle), (uv_fs_poll_cb)cb, path, interval);
+}
+
+int
+fatuv_fs_poll_stop(fatuv_fs_poll_t* handle)
+{
+	return uv_fs_poll_stop(FAT2UV_HANDLE(uv_fs_poll_t*, handle));
+}

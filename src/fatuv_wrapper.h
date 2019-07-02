@@ -12,6 +12,30 @@ typedef struct fatuv_addrinfo_s {
 	int proto;
 } fatuv_addrinfo_t;
 
+typedef struct fatuv_timespec_s {
+    long tv_sec;
+    long tv_nsec;
+} fatuv_timespec_t;
+
+typedef struct fatuv_stat_s {
+    uint64_t st_dev;
+    uint64_t st_mode;
+    uint64_t st_nlink;
+    uint64_t st_uid;
+    uint64_t st_gid;
+    uint64_t st_rdev;
+    uint64_t st_ino;
+    uint64_t st_size;
+    uint64_t st_blksize;
+    uint64_t st_blocks;
+    uint64_t st_flags;
+    uint64_t st_gen;
+    fatuv_timespec_t st_atim;
+    fatuv_timespec_t st_mtim;
+    fatuv_timespec_t st_ctim;
+    fatuv_timespec_t st_birthtim;
+} fatuv_stat_t;
+
 typedef void fatuv_loop_t;
 typedef void fatuv_handle_t;
 typedef void fatuv_stream_t;
@@ -25,6 +49,7 @@ typedef void fatuv_signal_t;
 typedef void fatuv_getaddrinfo_t;
 typedef void fatuv_pipe_t;
 typedef void fatuv_async_t;
+typedef void fatuv_fs_poll_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -38,6 +63,7 @@ typedef void (*fatuv_check_cb)(fatuv_check_t* handle);
 typedef void (*fatuv_prepare_cb)(fatuv_prepare_t* handle);
 typedef void (*fatuv_walk_cb)(fatuv_handle_t* handle,void* args);
 typedef void (*fatuv_async_cb)(fatuv_async_t* handle);
+typedef void (*fatuv_fs_poll_cb)(fatuv_fs_poll_t* handle, int stat, const fatuv_stat_t* uv_previous_stat,const fatuv_stat_t* uv_current_stat);
 
 /*
  * misc
@@ -217,9 +243,18 @@ int fatuv_pipe_bind(fatuv_pipe_t* handle, char* pipeName);
  */
 
 fatuv_async_t* fatuv_async_new(void);
-void fatuv_async_delete(fatuv_async_t* handle);
 int fatuv_async_init(fatuv_loop_t* loop, fatuv_async_t* handle, fatuv_async_cb cb);
-int fatuv_async_send(fatuv_async_t* async);
+void fatuv_async_delete(fatuv_async_t* handle);
+int fatuv_async_send(fatuv_async_t* handle);
 
+/*
+ * fs_poll
+ */
+
+fatuv_fs_poll_t* fatuv_fs_poll_new(void);
+int fatuv_fs_poll_init(fatuv_loop_t* loop, fatuv_fs_poll_t* handle);
+void fatuv_fs_poll_delete(fatuv_fs_poll_t* handle);
+int fatuv_fs_poll_start(fatuv_fs_poll_t* handle, fatuv_fs_poll_cb cb, char* path, int interval);
+int fatuv_fs_poll_stop(fatuv_fs_poll_t* handle);
 
 #endif
