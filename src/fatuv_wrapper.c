@@ -612,3 +612,74 @@ fatuv_tty_get_winsize(fatuv_tty_t* handle, int* c_with, int* c_height)
 	return uv_tty_get_winsize(FAT2UV_HANDLE(uv_tty_t*, handle), c_with, c_height);
 }
 
+/*
+ * pipe
+ */
+
+typedef struct fatuv_pipe_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_pipe_t handle;
+} fatuv_pipe_internal_t;
+
+fatuv_pipe_t*
+fatuv_pipe_new(void)
+{
+	return (fatuv_pipe_t*)calloc(1, sizeof(fatuv_pipe_internal_t));
+}
+
+void fatuv_pipe_delete(fatuv_pipe_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_pipe_init(fatuv_loop_t* loop, fatuv_pipe_t* handle, int ipc)
+{
+	return uv_pipe_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_pipe_t*, handle), ipc);
+}
+
+int
+fatuv_pipe_open(fatuv_pipe_t* handle, int fd)
+{
+    return uv_pipe_open(FAT2UV_HANDLE(uv_pipe_t*, handle), (uv_file) fd);
+}
+
+int
+fatuv_pipe_bind(fatuv_pipe_t* handle, char* pipeName)
+{
+	return uv_pipe_bind(FAT2UV_HANDLE(uv_pipe_t*, handle),pipeName);
+}
+
+/*
+ * async
+ */
+
+// pyobj should be in the first field
+typedef struct fatuv_async_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_async_t handle;
+} fatuv_async_internal_t;
+
+fatuv_async_t*
+fatuv_async_new(void)
+{
+	return (fatuv_async_t*)calloc(1, sizeof(fatuv_async_internal_t));
+}
+
+void
+fatuv_async_delete(fatuv_async_t* async)
+{
+	free(async);
+}
+
+int
+fatuv_async_init(fatuv_loop_t* loop, fatuv_async_t* async, fatuv_async_cb cb)
+{
+	return uv_async_init((uv_loop_t*)loop, FAT2UV_HANDLE(uv_async_t*, async), (uv_async_cb)cb);
+}
+
+int
+fatuv_async_send(fatuv_async_t* async)
+{
+	return uv_async_send(FAT2UV_HANDLE(uv_async_t*, async));
+}

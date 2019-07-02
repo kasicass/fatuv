@@ -23,6 +23,8 @@ typedef void fatuv_prepare_t;
 typedef void fatuv_timer_t;
 typedef void fatuv_signal_t;
 typedef void fatuv_getaddrinfo_t;
+typedef void fatuv_pipe_t;
+typedef void fatuv_async_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -35,6 +37,7 @@ typedef void (*fatuv_getaddrinfo_cb)(fatuv_addrinfo_t* result, int status);
 typedef void (*fatuv_check_cb)(fatuv_check_t* handle);
 typedef void (*fatuv_prepare_cb)(fatuv_prepare_t* handle);
 typedef void (*fatuv_walk_cb)(fatuv_handle_t* handle,void* args);
+typedef void (*fatuv_async_cb)(fatuv_async_t* handle);
 
 /*
  * misc
@@ -198,5 +201,25 @@ int fatuv_tty_init(fatuv_loop_t* loop, fatuv_tty_t* handle, int fd, int readable
 int fatuv_tty_set_mode(fatuv_tty_t* handle, fatuv_tty_mode mode);
 int fatuv_tty_reset_mode(void);
 int fatuv_tty_get_winsize(fatuv_tty_t* handle, int* c_with, int* c_height);
+
+/*
+ * pipe
+ */
+
+fatuv_pipe_t* fatuv_pipe_new(void);
+void fatuv_pipe_delete(fatuv_pipe_t* handle);
+int fatuv_pipe_init(fatuv_loop_t* loop, fatuv_pipe_t* handle, int ipc);
+int fatuv_pipe_open(fatuv_pipe_t* handle, int fd);
+int fatuv_pipe_bind(fatuv_pipe_t* handle, char* pipeName);
+
+/*
+ * async
+ */
+
+fatuv_async_t* fatuv_async_new(void);
+void fatuv_async_delete(fatuv_async_t* handle);
+int fatuv_async_init(fatuv_loop_t* loop, fatuv_async_t* handle, fatuv_async_cb cb);
+int fatuv_async_send(fatuv_async_t* async);
+
 
 #endif
