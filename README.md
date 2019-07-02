@@ -54,7 +54,7 @@ handles (test pass)
 - [x] TIMER
 - [x] TTY
 - [ ] UDP
-- [ ] FS_EVENT
+- [x] FS_EVENT
 - [x] FS_POLL
 
 requests (test pass)
