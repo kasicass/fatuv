@@ -2,6 +2,7 @@ import os
 import os.path
 import subprocess
 import sys
+import platform
 
 DEPS_PATH='./'
 LIBUV_PATH = os.path.join(DEPS_PATH, 'libuv')
@@ -18,6 +19,9 @@ def clone_libuv():
 def build_libuv():
 	print('building libuv...')
 	env=dict(os.environ)
+	if platform.system() == "OpenBSD":
+		env["AUTOMAKE_VERSION"] = "1.16"
+		env["AUTOCONF_VERSION"] = "2.69"
 	subprocess.check_call(['sh', 'autogen.sh'], cwd=LIBUV_PATH, env=env)
 	subprocess.check_call(['./configure'], cwd=LIBUV_PATH, env=env)
 	subprocess.check_call(['make'], cwd=LIBUV_PATH, env=env)
@@ -34,11 +38,11 @@ def clean_build():
 
 def print_help():
 	print("""Usage:
-		python op_libuv.py clone
-		python op_libuv.py build
-		python op_libuv.py clean
-		python op_libuv.py cleanbuild
-	""")
+	python build_libuv.py clone
+	python build_libuv.py build
+	python build_libuv.py clean
+	python build_libuv.py cleanbuild
+""")
 
 def main():
 	if len(sys.argv) != 2:
