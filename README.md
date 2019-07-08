@@ -7,9 +7,32 @@
 * benchmark inspired by [uvloop][2]
 
 
-## CLONE libuv
-
 ## BUILD
+
+### DEPENDS ON libuv SOURCES
+
+#### Debian 9.5
+
+```
+aptitude install make gcc libuv1-dev
+aptitude install python-dev python3-dev pypy pypy-dev
+```
+
+#### OpenBSD 6.4
+
+```
+# pkg_add -v pypy gmake automake-1.16.1 autoconf-2.69p2 libtool
+
+$ vim ~/.profile
+AUTOMAKE_VERSION="1.16"
+AUTOCONF_VERSION="2.69"
+
+$ python build_libuv.py clone
+$ python build_livuv.py build
+```
+
+
+### DEPENDS ON SYSTEM PACKAGES
 
 ```
 # python -m pip install cffi
@@ -20,14 +43,14 @@ $ python examples/08-timer.py
 $ pypy examples/08-timer.py
 ```
 
-## Debian 9.5
+#### Debian 9.5
 
 ```
 aptitude install make gcc libuv1-dev
 aptitude install python-dev python3-dev pypy pypy-dev
 ```
 
-## OpenBSD 6.4
+#### OpenBSD 6.4
 
 ```
 pkg_add -v pypy libuv gmake
