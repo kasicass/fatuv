@@ -88,4 +88,4 @@ requests (test pass)
 - [ ] WORK
 - [x] GETADDRINFO
 - [ ] GETNAMEINFO
-- [ ] UDP_SEND
+- [x] UDP_SEND
