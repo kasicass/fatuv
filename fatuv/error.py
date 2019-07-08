@@ -1,3 +1,5 @@
+import io
+
 STATUS_SUCCESS = 0
 
 class UVError(Exception):
@@ -59,3 +61,6 @@ class FSPollError(HandleError):
 
 class ArgumentError(UVError, ValueError):
     """ Invalid arguments. """
+
+class TemporaryUnavailableError(UVError, io.BlockingIOError):
+    """ Resource temporary unavailable. """

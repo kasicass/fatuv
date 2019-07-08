@@ -36,10 +36,12 @@ typedef struct fatuv_stat_s {
     fatuv_timespec_t st_birthtim;
 } fatuv_stat_t;
 
+
 typedef void fatuv_loop_t;
 typedef void fatuv_handle_t;
 typedef void fatuv_stream_t;
 typedef void fatuv_tcp_t;
+typedef void fatuv_udp_t;
 typedef void fatuv_tty_t;
 typedef void fatuv_idle_t;
 typedef void fatuv_check_t;
@@ -53,6 +55,7 @@ typedef void fatuv_fs_poll_t;
 typedef void fatuv_fs_event_t;
 typedef void fatuv_poll_t;
 typedef void fatuv_shutdown_t;
+typedef void fatuv_udp_send_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -70,6 +73,8 @@ typedef void (*fatuv_fs_poll_cb)(fatuv_fs_poll_t* handle, int stat, const fatuv_
 typedef void (*fatuv_fs_event_cb)(fatuv_fs_event_t* handle, const char* c_filename, int events, int status);
 typedef void (*fatuv_poll_cb)(fatuv_poll_t* handle,  int status, int events);
 typedef void (*fatuv_shutdown_cb)(fatuv_shutdown_t* req,  int status);
+typedef void (*fatuv_udp_send_cb)(fatuv_udp_send_t* req, int status);
+typedef void (*fatuv_udp_recv_cb)(fatuv_udp_t* handle, ssize_t length, const fatuv_buf_t* buf, const void* c_sockaddr, unsigned int flags); //TODO,stuct sockaddr
 
 /*
  * misc
@@ -148,6 +153,31 @@ int fatuv_tcp_nodelay(fatuv_tcp_t* handle, int enable);
 int fatuv_tcp_keepalive(fatuv_tcp_t* handle, int enable, unsigned int delay);
 int fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port);
 int fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port);
+
+/*
+ * udp
+ */
+typedef enum {
+    FATUV_LEAVE_GROUP = 0,
+    FATUV_JOIN_GROUP = 1
+} fatuv_membership;
+
+fatuv_udp_t* fatuv_udp_new(void);
+void fatuv_udp_delete(fatuv_udp_t* handle);
+int fatuv_udp_init(fatuv_loop_t* loop, fatuv_udp_t* handle, int flags);
+int fatuv_udp_open(fatuv_udp_t* handle, int fd);
+int fatuv_udp_v4_bind(fatuv_udp_t* handle, const char* ip, int port, int flags);
+int fatuv_udp_send(fatuv_udp_t* handle,  char* buf, unsigned int bufsz, const char* ip, int port, fatuv_udp_send_cb cb);
+int fatuv_udp_try_send(fatuv_udp_t* handle,  char* buf, unsigned int bufsz, const char* ip, int port);
+int fatuv_udp_recv_start(fatuv_udp_t* handle, fatuv_udp_recv_cb cb);
+int fatuv_udp_recv_stop(fatuv_udp_t* handle);
+int fatuv_udp_set_membership(fatuv_udp_t* handle, char* c_m_addr, char* c_i_addr, fatuv_membership membership);
+int fatuv_udp_set_multicast_loop(fatuv_udp_t* handle, int enable);
+int fatuv_udp_set_multicast_ttl(fatuv_udp_t* handle, int ttl);
+int fatuv_udp_set_multicast_interface(fatuv_udp_t* handle, char* interface);
+int fatuv_udp_set_broadcast(fatuv_udp_t* handle, int enable);
+int fatuv_udp_set_ttl(fatuv_udp_t* handle, int ttl);
+
 
 /*
  * idle

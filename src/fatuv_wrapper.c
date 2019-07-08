@@ -189,7 +189,6 @@ fatuv_write(fatuv_stream_t* fatstream, char* buf, unsigned int bufsz, fatuv_writ
 	wrbuf = uv_buf_init(buf, bufsz);
 	return uv_write((uv_write_t*)ctx, stream, &wrbuf, 1, fatuv_write_callback_internal);
 }
-
 /*
  * tcp
  */
@@ -255,6 +254,154 @@ fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port)
 	uv_ip4_name(addr4, ip, INET_ADDRSTRLEN); // INET_ADDRSTRLEN = 16
 	*port = ntohs(addr4->sin_port);
 	return 0;
+}
+
+/*
+ * udp
+ */
+
+typedef struct fatuv_udp_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_udp_t handle;
+} fatuv_udp_internal_t;
+
+fatuv_udp_t*
+fatuv_udp_new(void)
+{
+	return (fatuv_udp_t*)calloc(1, sizeof(fatuv_udp_internal_t));
+}
+
+void
+fatuv_udp_delete(fatuv_udp_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_udp_init(fatuv_loop_t* loop, fatuv_udp_t* handle, int flags)
+{
+	return uv_udp_init_ex((uv_loop_t*)loop, FAT2UV_HANDLE(uv_udp_t*, handle), flags);
+}
+
+int
+fatuv_udp_open(fatuv_udp_t* handle, int fd)
+{
+	return uv_udp_open(FAT2UV_HANDLE(fatuv_udp_t*, handle),fd);
+}
+
+int
+fatuv_udp_v4_bind(fatuv_udp_t* handle, const char* ip, int port, int flags)
+{
+	struct sockaddr_in addr;
+	uv_ip4_addr(ip, port, &addr);
+	return uv_udp_bind(FAT2UV_HANDLE(fatuv_udp_t*, handle),(const struct sockaddr*)&addr,flags);
+}
+
+typedef struct fatuv_udp_send_ctx_s{
+	uv_udp_send_t req;
+	fatuv_udp_t* handle;
+	fatuv_udp_send_cb callback;
+} fatuv_udp_send_ctx_t;
+
+static fatuv_udp_send_ctx_t*
+fatuv_udp_send_ctx_new(void)
+{
+	return (fatuv_udp_send_ctx_t*)calloc(1, sizeof(fatuv_udp_send_ctx_t));
+}
+
+static void
+fatuv_udp_send_ctx_delete(fatuv_udp_send_ctx_t* ctx)
+{
+	free(ctx);
+}
+
+static void
+fatuv_udp_send_callback_internal(uv_udp_send_t *req, int status)
+{
+	fatuv_udp_send_ctx_t *ctx;
+
+	ctx = (fatuv_udp_send_ctx_t*)req;
+	ctx->callback(ctx->handle, status);
+
+	fatuv_udp_send_ctx_delete(ctx);
+}
+
+int
+fatuv_udp_send(fatuv_udp_t* handle,  char* buf, unsigned int bufsz, const char* ip, int port, fatuv_udp_send_cb cb)
+{
+	struct sockaddr_in addr;
+	uv_ip4_addr(ip, port, &addr);
+
+	uv_udp_t* udp;
+	fatuv_udp_send_ctx_t *ctx;
+	uv_buf_t wrbuf;
+
+	udp = FAT2UV_HANDLE(uv_udp_t*, handle);
+	ctx = fatuv_udp_send_ctx_new();
+	ctx->handle = udp;
+	ctx->callback = cb;
+
+	wrbuf = uv_buf_init(buf, bufsz);
+	return uv_udp_send((uv_udp_send_t*)ctx, udp, &wrbuf, 1, (const struct sockaddr*)&addr, fatuv_udp_send_callback_internal);
+}
+
+int
+fatuv_udp_try_send(fatuv_udp_t* handle,  char* buf, unsigned int bufsz, const char* ip, int port)
+{
+	struct sockaddr_in addr;
+	uv_ip4_addr(ip, port, &addr);
+
+	uv_buf_t wrbuf;
+	wrbuf = uv_buf_init(buf, bufsz);
+	return uv_udp_try_send(FAT2UV_HANDLE(uv_udp_t*, handle), &wrbuf, 1, (const struct sockaddr*)&addr);
+}
+
+int
+fatuv_udp_recv_start(fatuv_udp_t* handle, fatuv_udp_recv_cb cb)
+{
+	return uv_udp_recv_start(FAT2UV_HANDLE(uv_udp_t*, handle), fatuv_alloc_cb, (uv_udp_recv_cb)cb);
+}
+
+int
+fatuv_udp_recv_stop(fatuv_udp_t* handle)
+{
+	return uv_udp_recv_stop(FAT2UV_HANDLE(uv_udp_t*, handle));
+}
+
+int
+fatuv_udp_set_membership(fatuv_udp_t* handle, char* c_m_addr, char* c_i_addr, fatuv_membership membership)
+{
+	return uv_udp_set_membership(FAT2UV_HANDLE(uv_udp_t*, handle), c_m_addr, c_i_addr, (uv_membership)membership);
+}
+
+int
+fatuv_udp_set_multicast_loop(fatuv_udp_t* handle, int enable)
+{
+	return uv_udp_set_multicast_loop(FAT2UV_HANDLE(uv_udp_t*, handle), enable);
+}
+
+int
+fatuv_udp_set_multicast_ttl(fatuv_udp_t* handle, int ttl)
+{
+	return uv_udp_set_multicast_ttl(FAT2UV_HANDLE(uv_udp_t*, handle), ttl);
+}
+
+int
+fatuv_udp_set_multicast_interface(fatuv_udp_t* handle, char* interface)
+{
+	return uv_udp_set_multicast_interface(FAT2UV_HANDLE(uv_udp_t*, handle), interface);
+}
+
+int
+fatuv_udp_set_broadcast(fatuv_udp_t* handle, int enable)
+{
+	return uv_udp_set_broadcast(FAT2UV_HANDLE(uv_udp_t*, handle), enable);
+}
+
+int
+fatuv_udp_set_ttl(fatuv_udp_t* handle, int ttl)
+{
+	return uv_udp_set_ttl(FAT2UV_HANDLE(uv_udp_t*, handle), ttl);
 }
 
 /*
