@@ -1,7 +1,7 @@
 from _fatuv import ffi, lib
 from .stream import Stream
-from .error import TCPError
-from .internal import get_strerror
+from ..error import TCPError
+from ..internal import get_strerror
 
 uv_get_pyobj          = lib.fatuv_get_pyobj
 uv_set_pyobj          = lib.fatuv_set_pyobj

@@ -1,7 +1,7 @@
 from _fatuv import ffi, lib
-from .handle import Handle
-from .error import StreamError
-from .internal import get_strerror
+from ..handle import Handle
+from ..error import StreamError
+from ..internal import get_strerror
 
 uv_get_pyobj  = lib.fatuv_get_pyobj
 uv_set_pyobj  = lib.fatuv_set_pyobj
@@ -11,6 +11,7 @@ uv_accept     = lib.fatuv_accept
 uv_read_start = lib.fatuv_read_start
 uv_read_stop  = lib.fatuv_read_stop
 uv_write      = lib.fatuv_write
+uv_shutdown     = lib.fatuv_shutdown
 
 __all__ = ['Stream']
 
@@ -37,6 +38,12 @@ def fatuv_write_callback(stream_handle, status):
 	ptr = uv_get_pyobj(stream_handle)
 	obj = ffi.from_handle(ptr)
 	obj._call_write_callback(status)
+
+@ffi.def_extern()
+def fatuv_shutdown_callback(stream_handle, status):
+	ptr = uv_get_pyobj(stream_handle)
+	obj = ffi.from_handle(ptr)
+	obj._call_shutdown_callback(status)
 
 class Stream(Handle):
 	def _dispose(self):
@@ -86,4 +93,14 @@ class Stream(Handle):
 		callback = self.write_callback
 		if callback:
 			callback(self, status)
-		
+
+	def shutdown(self, callback=None):
+		handle = self.handle
+		assert self.handle
+		self.shutdown_callback = callback
+		uv_shutdown(handle,lib.fatuv_shutdown_callback)
+	
+	def _call_shutdown_callback(self, status):
+		callback = self.shutdown_callback
+		if callback:
+			callback(self,status)

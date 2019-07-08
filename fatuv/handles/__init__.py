@@ -7,3 +7,6 @@ from .tty import *
 from .async import *
 from .fs_poll import *
 from .fs_event import *
+from .poll import *
+from .stream import *
+from .tcp import *

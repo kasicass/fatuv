@@ -51,6 +51,8 @@ typedef void fatuv_pipe_t;
 typedef void fatuv_async_t;
 typedef void fatuv_fs_poll_t;
 typedef void fatuv_fs_event_t;
+typedef void fatuv_poll_t;
+typedef void fatuv_shutdown_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -66,6 +68,8 @@ typedef void (*fatuv_walk_cb)(fatuv_handle_t* handle,void* args);
 typedef void (*fatuv_async_cb)(fatuv_async_t* handle);
 typedef void (*fatuv_fs_poll_cb)(fatuv_fs_poll_t* handle, int stat, const fatuv_stat_t* uv_previous_stat,const fatuv_stat_t* uv_current_stat);
 typedef void (*fatuv_fs_event_cb)(fatuv_fs_event_t* handle, const char* c_filename, int events, int status);
+typedef void (*fatuv_poll_cb)(fatuv_poll_t* handle,  int status, int events);
+typedef void (*fatuv_shutdown_cb)(fatuv_shutdown_t* req,  int status);
 
 /*
  * misc
@@ -188,6 +192,8 @@ int fatuv_signal_stop(fatuv_signal_t* signal);
 
 int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
 
+//int fatuv_getnameinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
+
 /*
  * check
  */
@@ -281,5 +287,23 @@ void fatuv_fs_event_delete(fatuv_fs_event_t* handle);
 int fatuv_fs_event_start(fatuv_fs_event_t* handle, fatuv_fs_event_cb cb, char* path, unsigned int flags);
 int fatuv_fs_event_stop(fatuv_fs_event_t* handle);
 
+/*
+ * poll
+ */
+typedef enum {
+    FATUV_POLL_EVENT_READABLE = 1,
+    FATUV_POLL_EVENT_WRITABLE
+} fatuv_poll_events;
+
+fatuv_poll_t* fatuv_poll_new(void);
+int fatuv_poll_init(fatuv_loop_t* loop, fatuv_poll_t* handle, int fd);
+void fatuv_poll_delete(fatuv_poll_t* handle);
+int fatuv_poll_start(fatuv_poll_t* handle, int status, fatuv_poll_cb cb);
+int fatuv_poll_stop(fatuv_poll_t* handle);
+
+/*
+ * shutdown
+ */
+int fatuv_shutdown(fatuv_stream_t* stream, fatuv_shutdown_cb cb);
 
 #endif

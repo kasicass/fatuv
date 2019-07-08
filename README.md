@@ -45,12 +45,12 @@ handles (test pass)
 - [ ] FILE
 - [x] IDLE
 - [ ] PIPE
-- [ ] POLL
+- [x] POLL
 - [x] PREPARE
 - [ ] PROCESS
 - [x] SIGNAL
-- [ ] STREAM
-- [ ] TCP
+- [x] STREAM
+- [x] TCP
 - [x] TIMER
 - [x] TTY
 - [ ] UDP
@@ -58,11 +58,11 @@ handles (test pass)
 - [x] FS_POLL
 
 requests (test pass)
-- [ ] CONNECT
-- [ ] WRITE
-- [ ] SHUTDOWN
+- [x] CONNECT
+- [x] WRITE
+- [x] SHUTDOWN
 - [ ] FS
 - [ ] WORK
-- [ ] GETADDRINFO
+- [x] GETADDRINFO
 - [ ] GETNAMEINFO
 - [ ] UDP_SEND

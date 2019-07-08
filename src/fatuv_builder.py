@@ -22,6 +22,8 @@ extern "Python" void fatuv_walk_callback(fatuv_handle_t*,void*);
 extern "Python" void fatuv_async_callback(fatuv_check_t*);
 extern "Python" void fatuv_fs_poll_callback(fatuv_fs_poll_t*, int, const fatuv_stat_t*, const fatuv_stat_t*);
 extern "Python" void fatuv_fs_event_callback(fatuv_fs_event_t*, const char*, int, int);
+extern "Python" void fatuv_poll_callback(fatuv_poll_t*, int, int);
+extern "Python" void fatuv_shutdown_callback(fatuv_shutdown_t*, int);
 """
 
 

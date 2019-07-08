@@ -761,3 +761,90 @@ fatuv_fs_event_stop(fatuv_fs_event_t* handle)
 {
 	return uv_fs_event_stop(FAT2UV_HANDLE(uv_fs_event_t*, handle));
 }
+
+/*
+ * poll
+ */
+
+// pyobj should be in the first field
+typedef struct fatuv_poll_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_poll_t handle;
+} fatuv_poll_internal_t;
+
+fatuv_poll_t* fatuv_poll_new(void)
+{
+	return (fatuv_poll_t*)calloc(1, sizeof(fatuv_poll_internal_t));
+}
+
+int
+fatuv_poll_init(fatuv_loop_t* loop, fatuv_poll_t* handle, int fd)
+{
+	return uv_poll_init_socket((uv_loop_t*)loop, FAT2UV_HANDLE(uv_poll_t*, handle), (uv_os_sock_t)fd);
+}
+
+void 
+fatuv_poll_delete(fatuv_poll_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_poll_start(fatuv_poll_t* handle, int status, fatuv_poll_cb cb)
+{
+	return uv_poll_start(FAT2UV_HANDLE(uv_poll_t*, handle), status, (uv_poll_cb)cb);
+}
+
+int
+fatuv_poll_stop(fatuv_poll_t* handle)
+{
+	return uv_poll_stop(FAT2UV_HANDLE(uv_poll_t*, handle));
+}
+
+/*
+ * stream-shutdown
+ */
+
+typedef struct fatuv_shutdown_ctx_s {
+	uv_shutdown_t req;
+	fatuv_stream_t* fatstream;
+	fatuv_shutdown_cb callback;
+} fatuv_shutdown_ctx_t;
+
+static fatuv_shutdown_ctx_t*
+fatuv_shutdown_ctx_new(void)
+{
+	return (fatuv_shutdown_ctx_t*)calloc(1, sizeof(fatuv_shutdown_ctx_t));
+}
+
+static void
+fatuv_shutdown_ctx_delete(fatuv_shutdown_ctx_t* ctx)
+{
+	free(ctx);
+}
+
+static void
+fatuv_shutdown_callback_internal(uv_shutdown_t *req, int status)
+{
+	fatuv_shutdown_ctx_t *ctx;
+
+	ctx = (fatuv_shutdown_ctx_t*)req;
+	ctx->callback(ctx->fatstream, status);
+
+	fatuv_shutdown_ctx_delete(ctx);
+}
+
+int
+fatuv_shutdown(fatuv_stream_t* fatstream, fatuv_shutdown_cb cb)
+{
+	uv_stream_t* stream;
+	fatuv_shutdown_ctx_t *ctx;
+	
+	stream = FAT2UV_HANDLE(uv_stream_t*, fatstream);
+	ctx = fatuv_shutdown_ctx_new();
+
+	ctx->fatstream = stream;
+	ctx->callback  = cb;
+
+	return uv_shutdown((uv_shutdown_t*)ctx, stream, fatuv_shutdown_callback_internal);
+}
