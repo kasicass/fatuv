@@ -2,9 +2,9 @@
 
 import sys
 sys.path.append('.')
+
 from common import TestCase
 import unittest
-
 import fatuv as uv
 
 
@@ -96,3 +96,4 @@ class TestTimer(TestCase):
 
 if __name__ == '__main__':
 	unittest.main(verbosity=2)
+

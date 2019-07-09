@@ -2,6 +2,7 @@
 
 import sys
 sys.path.append('.')
+
 from common import TestCase
 import unittest
 
@@ -113,32 +114,32 @@ class TestUDP(TestCase):
 		self.assert_equal(self.datagram, b'hello')
 
 	def test_udp_try_send(self):
-	    self.datagram = None
+		self.datagram = None
 
-	    def on_receive(udp_handle, data, status, address, flags):
-	        self.datagram = data
-	        udp_handle.receive_stop()
+		def on_receive(udp_handle, data, status, address, flags):
+			self.datagram = data
+			udp_handle.receive_stop()
 
-	    def on_timeout(timer):
-	        try:
-	            self.client.try_send(b'hello', (TEST_IPV4, TEST_PORT1))
-	        except uv.error.TemporaryUnavailableError:
-	            self.server.close()
-	            self.datagram = b'hello'
+		def on_timeout(timer):
+			try:
+				self.client.try_send(b'hello', (TEST_IPV4, TEST_PORT1))
+			except uv.error.TemporaryUnavailableError:
+				self.server.close()
+				self.datagram = b'hello'
 
-	    self.server = uv.UDP(self.loop)
-	    self.server.bind((TEST_IPV4, TEST_PORT1))
-	    self.server.receive_start(on_receive)
+		self.server = uv.UDP(self.loop)
+		self.server.bind((TEST_IPV4, TEST_PORT1))
+		self.server.receive_start(on_receive)
 
-	    self.client = uv.UDP(self.loop)
-	    self.client.bind(('0.0.0.0', 0))
+		self.client = uv.UDP(self.loop)
+		self.client.bind(('0.0.0.0', 0))
 
-	    self.timer = uv.Timer(self.loop)
-	    self.timer.start(on_timeout,1,0)
+		self.timer = uv.Timer(self.loop)
+		self.timer.start(on_timeout,1,0)
 
-	    self.loop.run()
+		self.loop.run()
 
-	    self.assert_equal(self.datagram, b'hello')
+		self.assert_equal(self.datagram, b'hello')
 
 	def test_udp_closed(self):
 		self.udp = uv.UDP(self.loop)
@@ -159,3 +160,4 @@ class TestUDP(TestCase):
 
 if __name__ == '__main__':
 	unittest.main(verbosity=2)
+
