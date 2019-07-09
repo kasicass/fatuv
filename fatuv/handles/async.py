@@ -19,41 +19,42 @@ def fatuv_async_callback(async_handle):
 	obj._call_async_callback()
 
 class Async(Handle):
-    def __init__(self, loop, callback = None):
-        super(Async, self).__init__(loop)
+	def __init__(self, loop, callback = None):
+		super(Async, self).__init__(loop)
 
-        handle = uv_async_new()
-        uv_async_init(loop.handle, handle, lib.fatuv_async_callback)
+		handle = uv_async_new()
+		uv_async_init(loop.handle, handle, lib.fatuv_async_callback)
 
-        self._userdata = ffi.new_handle(self)
-        uv_set_pyobj(handle, self._userdata)
+		self._userdata = ffi.new_handle(self)
+		uv_set_pyobj(handle, self._userdata)
 
-        self.handle = handle
-        self.async_callback = callback
-    
-    def _dispose(self):
-        handle = self.handle
-        assert handle
+		self.handle = handle
+		self.async_callback = callback
+	
+	def _dispose(self):
+		handle = self.handle
+		assert handle
 
-        self.async_callback = None
-        self.handle         = None
-        self._userdata      = None
+		self.async_callback = None
+		self.handle		 = None
+		self._userdata	  = None
 
-        uv_set_pyobj(handle, ffi.NULL)
-        uv_async_delete(handle)
+		uv_set_pyobj(handle, ffi.NULL)
+		uv_async_delete(handle)
 
-    def send(self, callback=None):
-        handle = self.handle
-        assert handle
+	def send(self, callback=None):
+		handle = self.handle
+		assert handle
 
-        if self.closing:
-            raise error.HandleClosedError()
+		if self.closing:
+			raise error.HandleClosedError()
 
-        self.async_callback = callback or self.async_callback
-        code = uv_async_send(self.handle)
-        if code != error.STATUS_SUCCESS:
+		self.async_callback = callback or self.async_callback
+		code = uv_async_send(self.handle)
+		if code != error.STATUS_SUCCESS:
 			raise error.UVError(code)
-    
-    def _call_async_callback(self):
+	
+	def _call_async_callback(self):
 		if self.async_callback:
 			self.async_callback(self)
+
