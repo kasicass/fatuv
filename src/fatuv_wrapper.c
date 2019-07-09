@@ -579,7 +579,7 @@ fatuv_getaddrinfo_callback_internal(uv_getaddrinfo_t* req, int status, struct ad
 	// TODO(kasicass): multi addrinfo
 	result.family   = res->ai_family;
 	result.socktype = res->ai_socktype;
-	result.proto    = res->ai_protocol;
+	result.proto	= res->ai_protocol;
 
 	ctx->callback(&result, status);
 
@@ -599,7 +599,7 @@ int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, c
 	hints.ai_family   = PF_INET;
 	hints.ai_socktype = SOCK_STREAM;	
 	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_flags    = 0;
+	hints.ai_flags	= 0;
 
 	return uv_getaddrinfo(FAT2UV_HANDLE(uv_loop_t*, loop), (uv_getaddrinfo_t*)ctx,
 		fatuv_getaddrinfo_callback_internal, node, service, &hints);
@@ -788,7 +788,7 @@ fatuv_pipe_init(fatuv_loop_t* loop, fatuv_pipe_t* handle, int ipc)
 int
 fatuv_pipe_open(fatuv_pipe_t* handle, int fd)
 {
-    return uv_pipe_open(FAT2UV_HANDLE(uv_pipe_t*, handle), (uv_file) fd);
+	return uv_pipe_open(FAT2UV_HANDLE(uv_pipe_t*, handle), (uv_file) fd);
 }
 
 int
@@ -1102,3 +1102,4 @@ fatuv_kill(int pid, int signum)
 {
 	return uv_kill(pid, signum);
 }
+

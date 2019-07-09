@@ -13,27 +13,27 @@ typedef struct fatuv_addrinfo_s {
 } fatuv_addrinfo_t;
 
 typedef struct fatuv_timespec_s {
-    long tv_sec;
-    long tv_nsec;
+	long tv_sec;
+	long tv_nsec;
 } fatuv_timespec_t;
 
 typedef struct fatuv_stat_s {
-    uint64_t st_dev;
-    uint64_t st_mode;
-    uint64_t st_nlink;
-    uint64_t st_uid;
-    uint64_t st_gid;
-    uint64_t st_rdev;
-    uint64_t st_ino;
-    uint64_t st_size;
-    uint64_t st_blksize;
-    uint64_t st_blocks;
-    uint64_t st_flags;
-    uint64_t st_gen;
-    fatuv_timespec_t st_atim;
-    fatuv_timespec_t st_mtim;
-    fatuv_timespec_t st_ctim;
-    fatuv_timespec_t st_birthtim;
+	uint64_t st_dev;
+	uint64_t st_mode;
+	uint64_t st_nlink;
+	uint64_t st_uid;
+	uint64_t st_gid;
+	uint64_t st_rdev;
+	uint64_t st_ino;
+	uint64_t st_size;
+	uint64_t st_blksize;
+	uint64_t st_blocks;
+	uint64_t st_flags;
+	uint64_t st_gen;
+	fatuv_timespec_t st_atim;
+	fatuv_timespec_t st_mtim;
+	fatuv_timespec_t st_ctim;
+	fatuv_timespec_t st_birthtim;
 } fatuv_stat_t;
 
 
@@ -161,8 +161,8 @@ int fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port);
  * udp
  */
 typedef enum {
-    FATUV_LEAVE_GROUP = 0,
-    FATUV_JOIN_GROUP = 1
+	FATUV_LEAVE_GROUP = 0,
+	FATUV_JOIN_GROUP = 1
 } fatuv_membership;
 
 fatuv_udp_t* fatuv_udp_new(void);
@@ -257,9 +257,9 @@ int fatuv_has_ref(fatuv_handle_t* handle);
  * tty
  */
 typedef enum {
-    FATUV_TTY_MODE_NORMAL,
-    FATUV_TTY_MODE_RAW,
-    FATUV_TTY_MODE_IO
+	FATUV_TTY_MODE_NORMAL,
+	FATUV_TTY_MODE_RAW,
+	FATUV_TTY_MODE_IO
 } fatuv_tty_mode;
 
 fatuv_tty_t* fatuv_tty_new(void);
@@ -306,15 +306,15 @@ int fatuv_fs_poll_stop(fatuv_fs_poll_t* handle);
  */
 
 typedef enum {
-    FATUV_FS_EVENTS_RENAME = 1,
-    FATUV_FS_EVENTS_CHANGE,
-    FATUV_FS_EVENTS_MODE_IO
+	FATUV_FS_EVENTS_RENAME = 1,
+	FATUV_FS_EVENTS_CHANGE,
+	FATUV_FS_EVENTS_MODE_IO
 } fatuv_fs_events;
 
 typedef enum {
-    FATUV_FS_EVENT_FLAGS_WATCH_ENTRY = 1,
-    FATUV_FS_EVENT_FLAGS_STAT,
-    FATUV_FS_EVENT_FLAGS_RECURSIVE
+	FATUV_FS_EVENT_FLAGS_WATCH_ENTRY = 1,
+	FATUV_FS_EVENT_FLAGS_STAT,
+	FATUV_FS_EVENT_FLAGS_RECURSIVE
 } fatuv_fs_event_flags;
 
 fatuv_fs_event_t* fatuv_fs_event_new(void);
@@ -327,8 +327,8 @@ int fatuv_fs_event_stop(fatuv_fs_event_t* handle);
  * poll
  */
 typedef enum {
-    FATUV_POLL_EVENT_READABLE = 1,
-    FATUV_POLL_EVENT_WRITABLE
+	FATUV_POLL_EVENT_READABLE = 1,
+	FATUV_POLL_EVENT_WRITABLE
 } fatuv_poll_events;
 
 fatuv_poll_t* fatuv_poll_new(void);
@@ -343,25 +343,25 @@ int fatuv_poll_stop(fatuv_poll_t* handle);
 int fatuv_shutdown(fatuv_stream_t* stream, fatuv_shutdown_cb cb);
 
 typedef enum {
-    FATUV_UNKNOWN_HANDLE = 0,
-    FATUV_ASYNC,
-    FATUV_CHECK,
-    FATUV_FS_EVENT,
-    FATUV_FS_POLL,
-    FATUV_HANDLE,
-    FATUV_IDLE,
-    FATUV_NAMED_PIPE,
-    FATUV_POLL,
-    FATUV_PREPARE,
-    FATUV_PROCESS,
-    FATUV_STREAM,
-    FATUV_TCP,
-    FATUV_TIMER,
-    FATUV_TTY,
-    FATUV_UDP,
-    FATUV_SIGNAL,
-    FATUV_FILE,
-    FATUV_HANDLE_TYPE_MAX
+	FATUV_UNKNOWN_HANDLE = 0,
+	FATUV_ASYNC,
+	FATUV_CHECK,
+	FATUV_FS_EVENT,
+	FATUV_FS_POLL,
+	FATUV_HANDLE,
+	FATUV_IDLE,
+	FATUV_NAMED_PIPE,
+	FATUV_POLL,
+	FATUV_PREPARE,
+	FATUV_PROCESS,
+	FATUV_STREAM,
+	FATUV_TCP,
+	FATUV_TIMER,
+	FATUV_TTY,
+	FATUV_UDP,
+	FATUV_SIGNAL,
+	FATUV_FILE,
+	FATUV_HANDLE_TYPE_MAX
 } fatuv_handle_type;
 
 /*
@@ -370,44 +370,44 @@ typedef enum {
 typedef void (*fatuv_exit_cb)(fatuv_process_t*, int64_t, int);
 
 enum fatv_process_flags{
-    FATUV_PROCESS_SETUID = 1,
-    FATUV_PROCESS_SETGID = 2,
-    FATUV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS = 4,
-    FATUV_PROCESS_DETACHED = 8,
-    FATUV_PROCESS_WINDOWS_HIDE = 16
+	FATUV_PROCESS_SETUID = 1,
+	FATUV_PROCESS_SETGID = 2,
+	FATUV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS = 4,
+	FATUV_PROCESS_DETACHED = 8,
+	FATUV_PROCESS_WINDOWS_HIDE = 16
 };
 
 typedef enum {
-    FATUV_IGNORE = 0,
-    FATUV_CREATE_PIPE = 1,
-    FATUV_INHERIT_FD = 2,
-    FATUV_INHERIT_STREAM = 4,
-    FATUV_READABLE_PIPE = 16,
-    FATUV_WRITABLE_PIPE = 32
+	FATUV_IGNORE = 0,
+	FATUV_CREATE_PIPE = 1,
+	FATUV_INHERIT_FD = 2,
+	FATUV_INHERIT_STREAM = 4,
+	FATUV_READABLE_PIPE = 16,
+	FATUV_WRITABLE_PIPE = 32
 } fatuv_stdio_flags;
 
 typedef struct {
-    fatuv_stdio_flags flags;
-    union {
-        fatuv_stream_t* stream;
-        int fd;
-    } data;
+	fatuv_stdio_flags flags;
+	union {
+		fatuv_stream_t* stream;
+		int fd;
+	} data;
 } fatuv_stdio_container_t;
 
 typedef unsigned int fatuv_uid_t;
 typedef unsigned int fatuv_gid_t;
 
 typedef struct fatuv_process_options_s {
-    fatuv_exit_cb exit_cb;
-    const char* file;
-    char** args;
-    char** env;
-    const char* cwd;
-    unsigned int flags;
-    int stdio_count;
-    fatuv_stdio_container_t* stdio;
-    fatuv_uid_t uid;
-    fatuv_gid_t gid;
+	fatuv_exit_cb exit_cb;
+	const char* file;
+	char** args;
+	char** env;
+	const char* cwd;
+	unsigned int flags;
+	int stdio_count;
+	fatuv_stdio_container_t* stdio;
+	fatuv_uid_t uid;
+	fatuv_gid_t gid;
 } fatuv_process_options_t;
 
 fatuv_process_t* fatuv_process_new(void);
@@ -417,3 +417,4 @@ int fatuv_process_kill(fatuv_process_t* handle, int signum);
 int fatuv_kill(int pid, int signum);
 
 #endif
+

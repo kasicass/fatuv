@@ -6,7 +6,7 @@ data = include_file.read()
 include_file.close()
 
 data = data[48:] # remove FATUV_WRAPPER_H
-data = data[:-7] # remove #endif
+data = data[:-8] # remove #endif
 
 data += """
 extern "Python" void fatuv_close_callback(fatuv_handle_t*);
