@@ -65,7 +65,6 @@ SCHEDULE
 handles (test pass)
 - [x] CHECK
 - [x] ASYNC
-- [ ] FILE
 - [x] IDLE
 - [x] PIPE
 - [x] POLL
