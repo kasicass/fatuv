@@ -67,7 +67,7 @@ handles (test pass)
 - [x] ASYNC
 - [ ] FILE
 - [x] IDLE
-- [ ] PIPE
+- [x] PIPE
 - [x] POLL
 - [x] PREPARE
 - [ ] PROCESS

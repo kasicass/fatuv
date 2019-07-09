@@ -56,6 +56,7 @@ typedef void fatuv_fs_event_t;
 typedef void fatuv_poll_t;
 typedef void fatuv_shutdown_t;
 typedef void fatuv_udp_send_t;
+typedef void fatuv_connect_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -75,7 +76,7 @@ typedef void (*fatuv_poll_cb)(fatuv_poll_t* handle,  int status, int events);
 typedef void (*fatuv_shutdown_cb)(fatuv_shutdown_t* req,  int status);
 typedef void (*fatuv_udp_send_cb)(fatuv_udp_send_t* req, int status);
 typedef void (*fatuv_udp_recv_cb)(fatuv_udp_t* handle, ssize_t length, const fatuv_buf_t* buf, const void* c_sockaddr, unsigned int flags); //TODO,stuct sockaddr
-
+typedef void (*fatuv_connect_cb)(fatuv_connect_t* handle, int status);
 /*
  * misc
  */
@@ -275,7 +276,10 @@ void fatuv_pipe_delete(fatuv_pipe_t* handle);
 int fatuv_pipe_init(fatuv_loop_t* loop, fatuv_pipe_t* handle, int ipc);
 int fatuv_pipe_open(fatuv_pipe_t* handle, int fd);
 int fatuv_pipe_bind(fatuv_pipe_t* handle, char* pipeName);
-
+int fatuv_pipe_pending_count(fatuv_pipe_t* handle);
+int fatuv_pipe_pending_type(fatuv_pipe_t* handle);
+void fatuv_pipe_pending_instances(fatuv_pipe_t* handle, int amount);
+void fatuv_pipe_connect(fatuv_pipe_t* handle,char* path,fatuv_connect_cb cb);
 /*
  * async
  */

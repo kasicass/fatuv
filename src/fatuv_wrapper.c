@@ -797,6 +797,69 @@ fatuv_pipe_bind(fatuv_pipe_t* handle, char* pipeName)
 	return uv_pipe_bind(FAT2UV_HANDLE(uv_pipe_t*, handle),pipeName);
 }
 
+int
+fatuv_pipe_pending_count(fatuv_pipe_t* handle)
+{
+	return uv_pipe_pending_count(FAT2UV_HANDLE(uv_pipe_t*, handle));
+}
+
+int
+fatuv_pipe_pending_type(fatuv_pipe_t* handle)
+{
+	return uv_pipe_pending_type(FAT2UV_HANDLE(uv_pipe_t*, handle));
+}
+
+void
+fatuv_pipe_pending_instances(fatuv_pipe_t* handle, int amount)
+{
+	uv_pipe_pending_instances(FAT2UV_HANDLE(uv_pipe_t*, handle), amount);
+}
+
+
+/*
+ * pipe-connect
+ */
+typedef struct fatuv_pipe_connect_ctx_s {
+	uv_connect_t req;
+	fatuv_handle_t* handle;
+	fatuv_connect_cb callback;
+}fatuv_pipe_connect_ctx_t;
+
+static fatuv_pipe_connect_ctx_t*
+fatuv_pipe_connect_ctx_new(void)
+{
+	return (fatuv_pipe_connect_ctx_t*)calloc(1, sizeof(fatuv_pipe_connect_ctx_t));
+}
+
+static void
+fatuv_pipe_connect_ctx_delete(fatuv_pipe_connect_ctx_t* ctx)
+{
+	free(ctx);
+}
+
+static void
+fatuv_pipe_connect_callback_internal(uv_connect_t *req, int status)
+{
+	fatuv_pipe_connect_ctx_t *ctx;
+
+	ctx = (fatuv_pipe_connect_ctx_t*)req;
+	ctx->callback(ctx->handle, status);
+
+	fatuv_pipe_connect_ctx_delete(ctx);
+}
+
+void
+fatuv_pipe_connect(fatuv_pipe_t* fathandle,char* path,fatuv_connect_cb cb)
+{
+	uv_pipe_t* handle;
+	fatuv_pipe_connect_ctx_t *ctx;
+	handle = FAT2UV_HANDLE(uv_pipe_t*, fathandle);
+	ctx = fatuv_pipe_connect_ctx_new();
+	ctx->handle = handle;
+	ctx->callback = cb;
+	uv_pipe_connect((uv_connect_t*)ctx, handle, path, fatuv_pipe_connect_callback_internal);
+}
+
 /*
  * async
  */
