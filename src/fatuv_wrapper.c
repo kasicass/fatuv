@@ -1058,3 +1058,47 @@ fatuv_shutdown(fatuv_stream_t* fatstream, fatuv_shutdown_cb cb)
 
 	return uv_shutdown((uv_shutdown_t*)ctx, stream, fatuv_shutdown_callback_internal);
 }
+
+/*
+ * process
+ */
+typedef struct fatuv_process_internal_s {
+	FATUV_PYOBJ_FIELDS;
+	uv_process_t handle;
+} fatuv_process_internal_t;
+
+fatuv_process_t*
+fatuv_process_new(void)
+{
+	return (fatuv_process_t*)calloc(1, sizeof(fatuv_process_internal_t));
+}
+
+void
+fatuv_process_delete(fatuv_process_t* handle)
+{
+	free(handle);
+}
+
+int
+fatuv_spawn(fatuv_loop_t* loop, fatuv_process_t* handle, fatuv_process_options_t* option)
+{
+	printf("fatuv_spawn,%d\n",(option->stdio+1)->data.fd);
+	printf("fatuv_spawn,%d\n",(((uv_process_options_t*)option)->stdio+1)->data.fd);
+	printf("fatuv_spawn,%d\n",(option->stdio+1)->data.fd);
+	printf("fatuv_spawn,%d\n",(((uv_process_options_t*)option)->stdio+1)->data.fd);
+	printf("fatuv_spawn,%d\n",(option->stdio+2)->data.fd);
+	printf("fatuv_spawn,%d\n",(((uv_process_options_t*)option)->stdio+2)->data.fd);
+	return uv_spawn((uv_loop_t*)loop, FAT2UV_HANDLE(uv_process_t*, handle),(uv_process_options_t*)option);
+}
+
+int
+fatuv_process_kill(fatuv_process_t* handle, int signum)
+{
+	return uv_process_kill(FAT2UV_HANDLE(uv_process_t*, handle), signum);
+}
+
+int
+fatuv_kill(int pid, int signum)
+{
+	return uv_kill(pid, signum);
+}

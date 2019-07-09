@@ -57,6 +57,7 @@ typedef void fatuv_poll_t;
 typedef void fatuv_shutdown_t;
 typedef void fatuv_udp_send_t;
 typedef void fatuv_connect_t;
+typedef void fatuv_process_t;
 
 typedef void (*fatuv_close_cb)(fatuv_handle_t* handle);
 typedef void (*fatuv_connection_cb)(fatuv_stream_t* server, int status);
@@ -77,6 +78,7 @@ typedef void (*fatuv_shutdown_cb)(fatuv_shutdown_t* req,  int status);
 typedef void (*fatuv_udp_send_cb)(fatuv_udp_send_t* req, int status);
 typedef void (*fatuv_udp_recv_cb)(fatuv_udp_t* handle, ssize_t length, const fatuv_buf_t* buf, const void* c_sockaddr, unsigned int flags); //TODO,stuct sockaddr
 typedef void (*fatuv_connect_cb)(fatuv_connect_t* handle, int status);
+
 /*
  * misc
  */
@@ -339,5 +341,79 @@ int fatuv_poll_stop(fatuv_poll_t* handle);
  * shutdown
  */
 int fatuv_shutdown(fatuv_stream_t* stream, fatuv_shutdown_cb cb);
+
+typedef enum {
+    FATUV_UNKNOWN_HANDLE = 0,
+    FATUV_ASYNC,
+    FATUV_CHECK,
+    FATUV_FS_EVENT,
+    FATUV_FS_POLL,
+    FATUV_HANDLE,
+    FATUV_IDLE,
+    FATUV_NAMED_PIPE,
+    FATUV_POLL,
+    FATUV_PREPARE,
+    FATUV_PROCESS,
+    FATUV_STREAM,
+    FATUV_TCP,
+    FATUV_TIMER,
+    FATUV_TTY,
+    FATUV_UDP,
+    FATUV_SIGNAL,
+    FATUV_FILE,
+    FATUV_HANDLE_TYPE_MAX
+} fatuv_handle_type;
+
+/*
+ * Process
+ */
+typedef void (*fatuv_exit_cb)(fatuv_process_t*, int64_t, int);
+
+enum fatv_process_flags{
+    FATUV_PROCESS_SETUID = 1,
+    FATUV_PROCESS_SETGID = 2,
+    FATUV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS = 4,
+    FATUV_PROCESS_DETACHED = 8,
+    FATUV_PROCESS_WINDOWS_HIDE = 16
+};
+
+typedef enum {
+    FATUV_IGNORE = 0,
+    FATUV_CREATE_PIPE = 1,
+    FATUV_INHERIT_FD = 2,
+    FATUV_INHERIT_STREAM = 4,
+    FATUV_READABLE_PIPE = 16,
+    FATUV_WRITABLE_PIPE = 32
+} fatuv_stdio_flags;
+
+typedef struct {
+    fatuv_stdio_flags flags;
+    union {
+        fatuv_stream_t* stream;
+        int fd;
+    } data;
+} fatuv_stdio_container_t;
+
+typedef unsigned int fatuv_uid_t;
+typedef unsigned int fatuv_gid_t;
+
+typedef struct fatuv_process_options_s {
+    fatuv_exit_cb exit_cb;
+    const char* file;
+    char** args;
+    char** env;
+    const char* cwd;
+    unsigned int flags;
+    int stdio_count;
+    fatuv_stdio_container_t* stdio;
+    fatuv_uid_t uid;
+    fatuv_gid_t gid;
+} fatuv_process_options_t;
+
+fatuv_process_t* fatuv_process_new(void);
+void fatuv_process_delete(fatuv_process_t* handle);
+int fatuv_spawn(fatuv_loop_t* loop, fatuv_process_t* handle, fatuv_process_options_t* option);
+int fatuv_process_kill(fatuv_process_t* handle, int signum);
+int fatuv_kill(int pid, int signum);
 
 #endif

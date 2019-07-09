@@ -1,5 +1,5 @@
 from _fatuv import ffi, lib
-from ..stream import Stream
+from .stream import Stream
 from .. import error
 
 uv_get_pyobj          = lib.fatuv_get_pyobj

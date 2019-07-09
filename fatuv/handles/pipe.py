@@ -1,12 +1,12 @@
 from _fatuv import ffi, lib
-from ..stream import Stream
+from .stream import Stream
 from .. import error
 
 uv_get_pyobj            = lib.fatuv_get_pyobj
 uv_set_pyobj            = lib.fatuv_set_pyobj
 
-uv_pipe_new             = lib.fatuv_pipe_new
 uv_pipe_delete          = lib.fatuv_pipe_delete
+uv_pipe_new             = lib.fatuv_pipe_new
 uv_pipe_init            = lib.fatuv_pipe_init
 uv_pipe_open            = lib.fatuv_pipe_open
 uv_pipe_bind            = lib.fatuv_pipe_bind

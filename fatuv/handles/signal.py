@@ -1,6 +1,7 @@
 from _fatuv import ffi, lib
 from ..handle import Handle
 from .. import error
+import signal as std_signal
 
 uv_get_pyobj       = lib.fatuv_get_pyobj
 uv_set_pyobj       = lib.fatuv_set_pyobj
@@ -13,6 +14,11 @@ uv_signal_start    = lib.fatuv_signal_start
 uv_signal_stop     = lib.fatuv_signal_stop
 
 __all__ = ['Signal']
+
+SIGINT = getattr(std_signal, 'SIGINT', 2)
+SIGBREAK = 21
+SIGHUP = getattr(std_signal, 'SIGHUP', 1)
+SIGWINCH = getattr(std_signal, 'SIGWINCH', 28)
 
 @ffi.def_extern()
 def fatuv_signal_callback(signal_handle, signum):

@@ -27,6 +27,7 @@ extern "Python" void fatuv_shutdown_callback(fatuv_shutdown_t*, int);
 extern "Python" void fatuv_udp_send_callback(fatuv_udp_t*, int);
 extern "Python" void fatuv_udp_recv_callback(fatuv_udp_t* handle, ssize_t nread, const fatuv_buf_t* buf, const void* addr, unsigned flags);
 extern "Python" void fatuv_pipe_connect_cb(fatuv_pipe_t*, int);
+extern "Python" void fatuv_exit_callback(fatuv_process_t*, int64_t, int);
 """
 
 

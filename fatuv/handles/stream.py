@@ -74,9 +74,12 @@ class Stream(Handle):
 	def start_read(self, callback):
 		handle = self.handle
 		assert self.handle
-
+		if self.closing:
+			raise error.HandleClosedError()
 		self.read_callback = callback
-		return uv_read_start(handle, lib.fatuv_read_callback)
+		code = uv_read_start(handle, lib.fatuv_read_callback)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 
 	def _call_read_callback(self, data, error):
 		callback = self.read_callback
@@ -99,7 +102,7 @@ class Stream(Handle):
 		assert self.handle
 		self.shutdown_callback = callback
 		uv_shutdown(handle,lib.fatuv_shutdown_callback)
-	
+
 	def _call_shutdown_callback(self, status):
 		callback = self.shutdown_callback
 		if callback:

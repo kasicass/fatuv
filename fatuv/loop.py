@@ -37,6 +37,7 @@ class Loop(object):
 	def __init__(self, default=True):
 		self.handle = uv_default_loop() if default else uv_loop_new()
 		uv_loop_init(self.handle)
+		self.pending = set()
 
 	def run(self, mode=UV_RUN_DEFAULT):
 		assert self.handle
