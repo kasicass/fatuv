@@ -4,15 +4,18 @@ from .. import error
 from ..error import StreamError
 from ..internal import get_strerror
 
-uv_get_pyobj  = lib.fatuv_get_pyobj
-uv_set_pyobj  = lib.fatuv_set_pyobj
+uv_get_pyobj    = lib.fatuv_get_pyobj
+uv_set_pyobj    = lib.fatuv_set_pyobj
 
-uv_listen     = lib.fatuv_listen
-uv_accept     = lib.fatuv_accept
-uv_read_start = lib.fatuv_read_start
-uv_read_stop  = lib.fatuv_read_stop
-uv_write      = lib.fatuv_write
+uv_listen       = lib.fatuv_listen
+uv_accept       = lib.fatuv_accept
+uv_read_start   = lib.fatuv_read_start
+uv_read_stop    = lib.fatuv_read_stop
+uv_write        = lib.fatuv_write
+uv_try_write    = lib.fatuv_try_write
 uv_shutdown     = lib.fatuv_shutdown
+uv_is_readable  = lib.fatuv_is_readable
+uv_is_writable  = lib.fatuv_is_writable
 
 __all__ = ['Stream']
 
@@ -54,7 +57,8 @@ class Stream(Handle):
 	def listen(self, callback, backlog=128):
 		handle = self.handle
 		assert self.handle
-
+		if self.closing:
+			raise error.HandleClosedError()
 		self.conn_callback = callback
 		return uv_listen(handle, backlog, lib.fatuv_connection_callback)
 
@@ -64,9 +68,10 @@ class Stream(Handle):
 			callback(self, status)
 
 	def accept(self, client):
+		if self.closing:
+			raise error.HandleClosedError()
 		if not isinstance(client, Stream):
 			raise TypeError("Only stream objects are supported for accept")
-
 		assert self.handle
 		err = uv_accept(self.handle, client.handle)
 		if err < 0:
@@ -86,10 +91,21 @@ class Stream(Handle):
 		callback = self.read_callback
 		if callback:
 			callback(self, data, error)
+	
+	def stop_read(self):
+		if self.closing:
+			return
+		handle = self.handle
+		assert self.handle
+		code = uv_read_stop(handle)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 
 	def write(self, data, callback=None):
 		handle = self.handle
 		assert self.handle
+		if self.closing:
+			raise error.HandleClosedError()
 		self.write_callback = callback
 		uv_write(handle, data, len(data), lib.fatuv_write_callback)
 
@@ -98,9 +114,21 @@ class Stream(Handle):
 		if callback:
 			callback(self, status)
 
+	def try_write(self, data):
+		handle = self.handle
+		assert self.handle
+		if self.closing:
+			raise error.HandleClosedError()
+		code = uv_try_write(handle, data, len(data))
+		if code < 0:
+			raise error.UVError(code)
+		return code
+
 	def shutdown(self, callback=None):
 		handle = self.handle
 		assert self.handle
+		if self.closing:
+			raise error.HandleClosedError()
 		self.shutdown_callback = callback
 		uv_shutdown(handle,lib.fatuv_shutdown_callback)
 
@@ -108,3 +136,15 @@ class Stream(Handle):
 		callback = self.shutdown_callback
 		if callback:
 			callback(self,status)
+
+	@property
+	def readable(self):
+		if self.closing:
+			return False
+		return bool(uv_is_readable(self.handle))
+
+	@property
+	def writable(self):
+		if self.closing:
+			return False
+		return bool(uv_is_writable(self.handle))

@@ -189,6 +189,15 @@ fatuv_write(fatuv_stream_t* fatstream, char* buf, unsigned int bufsz, fatuv_writ
 	wrbuf = uv_buf_init(buf, bufsz);
 	return uv_write((uv_write_t*)ctx, stream, &wrbuf, 1, fatuv_write_callback_internal);
 }
+
+int
+fatuv_try_write(fatuv_stream_t* handle, char* buf, unsigned int bufsz)
+{
+	uv_buf_t wrbuf;
+	wrbuf = uv_buf_init(buf, bufsz);
+	return uv_try_write(FAT2UV_HANDLE(uv_stream_t*, handle), &wrbuf, 1);
+}
+
 /*
  * tcp
  */
@@ -1108,3 +1117,14 @@ fatuv_process_pid(fatuv_process_t* handle)
 	return FAT2UV_HANDLE(uv_process_t*, handle)->pid;
 }
 
+int
+fatuv_is_readable(fatuv_stream_t* handle)
+{
+	return uv_is_readable(FAT2UV_HANDLE(uv_stream_t*, handle));
+}
+
+int
+fatuv_is_writable(fatuv_stream_t* handle)
+{
+	return uv_is_writable(FAT2UV_HANDLE(uv_stream_t*, handle));
+}

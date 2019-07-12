@@ -138,6 +138,9 @@ int fatuv_read_start(fatuv_stream_t* stream, fatuv_read_cb read_cb);
 int fatuv_read_stop(fatuv_stream_t* stream);
 
 int fatuv_write(fatuv_stream_t* stream, char* buf, unsigned int bufsz, fatuv_write_cb cb);
+int fatuv_is_readable(fatuv_stream_t* stream);
+int fatuv_is_writable(fatuv_stream_t* stream);
+int fatuv_try_write(fatuv_stream_t* stream, char* buf, unsigned int bufsz);
 // int fatuv_write(fatuv_stream_t* stream, const fatuv_buf_t bufs[], unsigned int nbufs, fatuv_write_cb cb);
 
 /*
