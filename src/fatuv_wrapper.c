@@ -265,6 +265,58 @@ fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port)
 	return 0;
 }
 
+int
+fatuv_tcp_open(fatuv_tcp_t* handle, int fd)
+{
+	return uv_tcp_open(FAT2UV_HANDLE(uv_tcp_t*, handle), (uv_os_sock_t)fd);
+}
+
+/*
+ * tcp-connect
+ */
+typedef struct fatuv_tcp_connect_ctx_s {
+	uv_connect_t req;
+	fatuv_handle_t* handle;
+	fatuv_connect_cb callback;
+}fatuv_tcp_connect_ctx_t;
+
+static fatuv_tcp_connect_ctx_t*
+fatuv_tcp_connect_ctx_new(void)
+{
+	return (fatuv_tcp_connect_ctx_t*)calloc(1, sizeof(fatuv_tcp_connect_ctx_t));
+}
+
+static void
+fatuv_tcp_connect_ctx_delete(fatuv_tcp_connect_ctx_t* ctx)
+{
+	free(ctx);
+}
+
+static void
+fatuv_tcp_connect_callback_internal(uv_connect_t *req, int status)
+{
+	fatuv_tcp_connect_ctx_t *ctx;
+
+	ctx = (fatuv_tcp_connect_ctx_t*)req;
+	ctx->callback(ctx->handle, status);
+
+	fatuv_tcp_connect_ctx_delete(ctx);
+}
+
+int
+fatuv_tcp_connect(fatuv_tcp_t* fathandle, const char* ip, int port,fatuv_connect_cb cb)
+{
+	uv_tcp_t* handle;
+	fatuv_tcp_connect_ctx_t *ctx;
+	handle = FAT2UV_HANDLE(uv_tcp_t*, fathandle);
+	ctx = fatuv_tcp_connect_ctx_new();
+	ctx->handle = handle;
+	ctx->callback = cb;
+	struct sockaddr_in addr;
+	uv_ip4_addr(ip, port, &addr);
+	return uv_tcp_connect((uv_connect_t*)ctx, handle, (const struct sockaddr*)&addr, fatuv_tcp_connect_callback_internal);
+}
+
 /*
  * udp
  */

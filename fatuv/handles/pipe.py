@@ -21,7 +21,7 @@ def fatuv_pipe_connect_cb(handle, status):
 	obj = ffi.from_handle(ptr)
 	obj._call_pipe_connect_callback(status)
 
-
+__all__ = ['Pipe']
 class Pipe(Stream):
 	def __init__(self, loop, ipc=False):
 		super(Pipe, self).__init__(loop)
