@@ -52,7 +52,7 @@ handles (test pass)
 - [x] PIPE
 - [x] POLL
 - [x] PREPARE
-- [ ] PROCESS
+- [x] PROCESS
 - [x] SIGNAL
 - [x] STREAM
 - [x] TCP
