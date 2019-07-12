@@ -415,6 +415,7 @@ void fatuv_process_delete(fatuv_process_t* handle);
 int fatuv_spawn(fatuv_loop_t* loop, fatuv_process_t* handle, fatuv_process_options_t* option);
 int fatuv_process_kill(fatuv_process_t* handle, int signum);
 int fatuv_kill(int pid, int signum);
+int fatuv_process_pid(fatuv_process_t* handle);
 
 #endif
 

@@ -16,14 +16,14 @@ uv_process_kill     = lib.fatuv_process_kill
 uv_kill             = lib.fatuv_kill
 
 class _FD(int):
-    def __repr__(self):
-        return '<FileDescriptor: {}>'.format(self)
+	def __repr__(self):
+		return '<FileDescriptor: {}>'.format(self)
 
 def _get_fileno(fileobj):
-    try:
-        return _FD(fileobj.fileno())
-    except Exception:
-        return None
+	try:
+		return _FD(fileobj.fileno())
+	except Exception:
+		return None
 
 __all__ = ['Process']
 
@@ -130,12 +130,13 @@ class Process(Handle):
 		self.exit_callback = callback
 
 		handle = uv_process_new()
-		uv_spawn(loop.handle, handle, uv_options)
+		code = uv_spawn(loop.handle, handle, uv_options)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
+
 		self._userdata = ffi.new_handle(self)
 		uv_set_pyobj(handle, self._userdata)
 		self.handle = handle
-
-		self.loop.pending.add(self)
 
 	def _dispose(self):
 		handle = self.handle
@@ -158,3 +159,9 @@ class Process(Handle):
 		code = uv_process_kill(self.handle, signum)
 		if code != error.STATUS_SUCCESS:
 			raise error.UVError(code)
+
+	@property
+	def pid(self):
+		if self.closing:
+			raise error.HandleClosedError()
+		return lib.fatuv_process_pid(self.handle)

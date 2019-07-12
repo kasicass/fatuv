@@ -1082,13 +1082,12 @@ fatuv_process_delete(fatuv_process_t* handle)
 int
 fatuv_spawn(fatuv_loop_t* loop, fatuv_process_t* handle, fatuv_process_options_t* option)
 {
-	printf("fatuv_spawn,%d\n",(option->stdio+1)->data.fd);
-	printf("fatuv_spawn,%d\n",(((uv_process_options_t*)option)->stdio+1)->data.fd);
-	printf("fatuv_spawn,%d\n",(option->stdio+1)->data.fd);
-	printf("fatuv_spawn,%d\n",(((uv_process_options_t*)option)->stdio+1)->data.fd);
-	printf("fatuv_spawn,%d\n",(option->stdio+2)->data.fd);
-	printf("fatuv_spawn,%d\n",(((uv_process_options_t*)option)->stdio+2)->data.fd);
-	return uv_spawn((uv_loop_t*)loop, FAT2UV_HANDLE(uv_process_t*, handle),(uv_process_options_t*)option);
+	int mask = UV_CREATE_PIPE | UV_INHERIT_STREAM;
+	if ((option->stdio+1)->flags & mask){
+		(((uv_process_options_t*)option)->stdio+1)->data.stream = FAT2UV_HANDLE(uv_stream_t*,(option->stdio+1)->data.stream);
+	}
+	int r = uv_spawn((uv_loop_t*)loop, FAT2UV_HANDLE(uv_process_t*, handle),(uv_process_options_t*)option);
+	return r;
 }
 
 int
@@ -1101,5 +1100,11 @@ int
 fatuv_kill(int pid, int signum)
 {
 	return uv_kill(pid, signum);
+}
+
+int
+fatuv_process_pid(fatuv_process_t* handle)
+{
+	return FAT2UV_HANDLE(uv_process_t*, handle)->pid;
 }
 

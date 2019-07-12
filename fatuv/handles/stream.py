@@ -1,5 +1,6 @@
 from _fatuv import ffi, lib
 from ..handle import Handle
+from .. import error
 from ..error import StreamError
 from ..internal import get_strerror
 
