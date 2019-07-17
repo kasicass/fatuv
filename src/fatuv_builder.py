@@ -37,8 +37,8 @@ ffibuilder.set_source("_fatuv", """
 	#include "fatuv_wrapper.h"
 """,
 #	extra_compile_args=['-g'],
-	include_dirs=['/usr/local/include'],
-	library_dirs=['/usr/local/lib'],
+	include_dirs=['../libuv/include'],
+	library_dirs=['../libuv/.libs'],
 	sources=['fatuv_wrapper.c'],
 	libraries=['uv'])
 
