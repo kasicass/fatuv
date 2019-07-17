@@ -46,6 +46,12 @@ fatuv_run(fatuv_loop_t* loop, fatuv_run_mode mode)
 	return uv_run((uv_loop_t*)loop, (uv_run_mode)mode);
 }
 
+void
+fatuv_stop(fatuv_loop_t* loop)
+{
+	uv_stop((uv_loop_t*)loop);
+}
+
 /*
  * handle
  */

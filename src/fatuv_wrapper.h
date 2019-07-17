@@ -107,6 +107,8 @@ int fatuv_run(fatuv_loop_t*, fatuv_run_mode mode);
 
 void fatuv_walk(fatuv_loop_t*, fatuv_walk_cb walk_cb, void*);
 
+void fatuv_stop(fatuv_loop_t*);
+
 /*
  * handle
  */

@@ -9,7 +9,8 @@ uv_loop_new     = lib.fatuv_loop_new
 uv_loop_delete  = lib.fatuv_loop_delete
 uv_loop_init    = lib.fatuv_loop_init
 uv_loop_close   = lib.fatuv_loop_close
-uv_walk			= lib.fatuv_walk
+uv_walk         = lib.fatuv_walk
+uv_stop         = lib.fatuv_stop
 
 uv_run          = lib.fatuv_run
 
@@ -48,6 +49,11 @@ class Loop(object):
 		uv_loop_close(self.handle)
 		uv_loop_delete(self.handle)
 		self.handle = None
+
+	def stop(self):
+		if self.closed:
+			return
+		uv_stop(self.handle)
 
 	@property
 	def closed(self):
