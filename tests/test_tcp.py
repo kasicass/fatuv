@@ -25,13 +25,13 @@ class TestTCP(TestCase):
 		# 	peername = self.tcp.peername
 		self.assert_raises(uv.HandleClosedError, self.tcp.nodelay, True)
 		self.assert_raises(uv.HandleClosedError, self.tcp.keepalive, True, 10)
-		# self.assert_raises(uv.HandleClosedError, self.tcp.set_simultaneous_accepts, True)
+		self.assert_raises(uv.HandleClosedError, self.tcp.set_simultaneous_accepts, True)
 
 	def test_settings(self):
 		self.tcp = uv.TCP(self.loop)
 		self.tcp.nodelay(True)
 		self.tcp.keepalive(False, 10)
-		# self.tcp.set_simultaneous_accepts(True)
+		self.tcp.set_simultaneous_accepts(True)
 
 	def test_open(self):
 		server = socket.socket()

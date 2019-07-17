@@ -161,6 +161,8 @@ int fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port);
 int fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port);
 int fatuv_tcp_open(fatuv_tcp_t* handle, int fd);
 int fatuv_tcp_connect(fatuv_tcp_t* handle, const char* ip, int port, fatuv_connect_cb cb);
+int fatuv_tcp_simultaneous_accepts(fatuv_tcp_t* handle, int enable);
+
 /*
  * udp
  */
@@ -227,9 +229,18 @@ int fatuv_signal_stop(fatuv_signal_t* signal);
  * dns
  */
 
-int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
+/* DNS */
+// typedef struct {
+//     void* data;
+//     uv_loop_t* loop;
+//     struct addrinfo* addrinfo;
+//     ...;
+// } fatuv_getaddrinfo_t;
 
-//int fatuv_getnameinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
+int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
+// int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_t*, uv_getaddrinfo_cb, const char*, const char*, const struct addrinfo*);
+
+// int fatuv_getnameinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
 
 /*
  * check

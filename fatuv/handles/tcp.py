@@ -18,6 +18,7 @@ uv_tcp_v4_bind        = lib.fatuv_tcp_v4_bind
 uv_tcp_v4_getpeername = lib.fatuv_tcp_v4_getpeername
 uv_tcp_open           = lib.fatuv_tcp_open
 uv_tcp_connect        = lib.fatuv_tcp_connect
+uv_tcp_simultaneous_accepts = lib.fatuv_tcp_simultaneous_accepts
 
 __all__ = ['TCP']
 
@@ -150,3 +151,8 @@ class TCP(Stream):
 
 		return ptr[0]
 
+	def set_simultaneous_accepts(self,enable):
+		assert self.handle
+		if self.closing:
+			raise error.HandleClosedError()
+		return uv_tcp_simultaneous_accepts(self.handle, enable)

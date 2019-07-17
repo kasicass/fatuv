@@ -271,6 +271,12 @@ fatuv_tcp_open(fatuv_tcp_t* handle, int fd)
 	return uv_tcp_open(FAT2UV_HANDLE(uv_tcp_t*, handle), (uv_os_sock_t)fd);
 }
 
+int
+fatuv_tcp_simultaneous_accepts(fatuv_tcp_t* handle, int enable)
+{
+	return uv_tcp_simultaneous_accepts(FAT2UV_HANDLE(uv_tcp_t*, handle), enable);
+}
+
 /*
  * tcp-connect
  */
