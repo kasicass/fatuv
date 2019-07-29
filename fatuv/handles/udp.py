@@ -40,18 +40,6 @@ def fatuv_udp_recv_callback(handle, nread, buf, sockaddr, flags):
 	else:
 		obj._call_udp_recv_callback(None, nread, sockaddr, flags)
 
-@ffi.def_extern()
-def fatuv_read_callback(stream_handle, nread, buf):
-	ptr = uv_get_pyobj(stream_handle)
-	obj = ffi.from_handle(ptr)
-	if nread < 0:
-		obj._call_read_callback(None, nread)
-	elif nread > 0:
-		data = ffi.unpack(buf.base, nread)
-		obj._call_read_callback(data, nread)
-	else:
-		obj._call_read_callback(None, nread)
-
 class UDP(Handle):
 	def __init__(self, loop, flags=0):
 		super(UDP, self).__init__(loop)
