@@ -61,7 +61,9 @@ class Stream(Handle):
 		if self.closing:
 			raise error.HandleClosedError()
 		self.conn_callback = callback
-		return uv_listen(handle, backlog, lib.fatuv_connection_callback)
+		err = uv_listen(handle, backlog, lib.fatuv_connection_callback)
+		if err != error.STATUS_SUCCESS:
+			raise StreamError((err,get_strerror(err)))
 
 	def _call_conn_callback(self, status):
 		callback = self.conn_callback
@@ -76,7 +78,7 @@ class Stream(Handle):
 		assert self.handle
 		err = uv_accept(self.handle, client.handle)
 		if err < 0:
-			raise StreamError((err, get_strerror))
+			raise StreamError((err,get_strerror(err)))
 
 	def start_read(self, callback):
 		handle = self.handle

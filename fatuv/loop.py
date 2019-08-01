@@ -46,7 +46,6 @@ class Loop(object):
 
 	def close(self):
 		assert self.handle
-		uv_loop_close(self.handle)
 		uv_loop_delete(self.handle)
 		self.handle = None
 
@@ -66,8 +65,22 @@ class Loop(object):
 		if not self.closed:
 			uv_walk(self.handle, lib.fatuv_walk_callback, ffi.new_handle(handles))
 		return handles
-	
+
 	def close_all_handles(self, on_closed=None):
 		for handle in self.handles:
 			handle.close(on_closed)
 
+	def close_all(self):
+		if not self.closed:
+			self.close_all_handles()
+			self.run()
+			self.close()
+
+	def set_pending(self, structure):
+		self.pending.add(structure)
+
+	def clear_pending(self, structure):
+		try:
+			self.pending.remove(structure)
+		except KeyError:
+			pass

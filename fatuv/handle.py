@@ -1,5 +1,6 @@
 from _fatuv import ffi, lib
 from .error import HandleError
+import error
 from .internal import get_strerror
 
 uv_get_pyobj  = lib.fatuv_get_pyobj
@@ -30,10 +31,17 @@ class Handle(object):
 
 	def close(self, callback=None):
 		assert self.handle
-		if not self.closing:
-			self.closing = True
-			self.close_callback = callback
-			uv_close(self.handle, lib.fatuv_close_callback)
+		if self.closing:
+			return
+		self.closing = True
+		self.close_callback = callback
+		uv_close(self.handle, lib.fatuv_close_callback)
+
+	def set_pending(self):
+		self.loop.set_pending(self)
+
+	def clear_pending(self):
+		self.loop.clear_pending(self)
 
 	def _call_close_callback(self):
 		callback = self.close_callback

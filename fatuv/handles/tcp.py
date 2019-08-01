@@ -64,7 +64,9 @@ class TCP(Stream):
 			raise error.HandleClosedError()
 		ip, port = addr
 		ip = ffi.new('char[]', ip)
-		return uv_tcp_v4_bind(self.handle, ip, port)
+		code = uv_tcp_v4_bind(self.handle, ip, port)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 
 	def getpeername(self):
 		assert self.handle
