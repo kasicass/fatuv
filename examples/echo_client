@@ -48,7 +48,7 @@ if __name__ == '__main__':
 						help='request concurrency')
 	parser.add_argument('--timeout', default=2, type=int,
 						help='socket timeout in seconds')
-	parser.add_argument('--addr', default='127.0.0.1:25000', type=str,
+	parser.add_argument('--addr', default='127.0.0.1:1234', type=str,
 						help='server address')
 	parser.add_argument('--output-format', default='text', type=str,
 						help='output format', choices=['text', 'json'])

@@ -19,7 +19,7 @@ fatuv_loop_new(void)
 void
 fatuv_loop_delete(fatuv_loop_t* loop)
 {
-	free(loop);
+	uv_loop_delete((uv_loop_t*)loop);
 }
 
 fatuv_loop_t*
