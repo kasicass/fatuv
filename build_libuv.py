@@ -25,6 +25,7 @@ def build_libuv():
 	subprocess.check_call(['sh', 'autogen.sh'], cwd=LIBUV_PATH, env=env)
 	subprocess.check_call(['./configure'], cwd=LIBUV_PATH, env=env)
 	subprocess.check_call(['make'], cwd=LIBUV_PATH, env=env)
+	subprocess.check_call(['make', 'install'], cwd=LIBUV_PATH, env=env)
 
 def clean_libuv():
 	print('cleaning libuv...')
