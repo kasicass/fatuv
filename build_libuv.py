@@ -8,7 +8,7 @@ DEPS_PATH='./'
 LIBUV_PATH = os.path.join(DEPS_PATH, 'libuv')
 LIBUV_REPO = 'https://github.com/libuv/libuv.git'
 LIBUV_BRANCH = 'v1.x'
-LIBUV_TAG = 'v1.9.0'
+LIBUV_TAG = 'v1.30.1'
 
 def clone_libuv():
     print('cloning libuv...')
