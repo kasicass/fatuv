@@ -29,11 +29,11 @@ def fatuv_tcp_connect_cb(handle, status):
 	obj._call_tcp_connect_callback(status)
 
 class TCP(Stream):
-	def __init__(self, loop):
+	def __init__(self, loop=None):
 		super(TCP, self).__init__(loop)
 
-		handle = uv_tcp_new();
-		uv_tcp_init(loop.handle, handle)
+		handle = uv_tcp_new()
+		uv_tcp_init(self.loop.handle, handle)
 
 		self._userdata = ffi.new_handle(self)
 		uv_set_pyobj(handle, self._userdata)
@@ -98,7 +98,9 @@ class TCP(Stream):
 		if self.closing:
 			raise error.HandleClosedError()
 		self.tcp_connect_callback = callback or self.tcp_connect_callback
-		uv_tcp_connect(self.handle, ip, port, lib.fatuv_tcp_connect_cb)
+		code = uv_tcp_connect(self.handle, ip, port, lib.fatuv_tcp_connect_cb)
+		if code != error.STATUS_SUCCESS:
+			raise error.UVError(code)
 
 	def _call_tcp_connect_callback(self,status):
 		callback = self.tcp_connect_callback

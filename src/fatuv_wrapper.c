@@ -305,7 +305,7 @@ fatuv_tcp_connect_ctx_delete(fatuv_tcp_connect_ctx_t* ctx)
 }
 
 static void
-fatuv_tcp_connect_callback_internal(uv_connect_t *req, int status)
+fatuv_tcp_connect_callback_internal(uv_connect_t* req, int status)
 {
 	fatuv_tcp_connect_ctx_t *ctx;
 

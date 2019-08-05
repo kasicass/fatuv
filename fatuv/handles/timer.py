@@ -23,11 +23,11 @@ def fatuv_timer_callback(timer_handle):
 	obj._call_timer_callback()
 
 class Timer(Handle):
-	def __init__(self, loop):
+	def __init__(self, loop=None):
 		super(Timer, self).__init__(loop)
 
 		handle = uv_timer_new()
-		uv_timer_init(loop.handle, handle)
+		uv_timer_init(self.loop.handle, handle)
 
 		self._userdata = ffi.new_handle(self)
 		uv_set_pyobj(handle, self._userdata)

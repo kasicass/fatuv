@@ -2,6 +2,7 @@ from _fatuv import ffi, lib
 from .error import HandleError
 import error
 from .internal import get_strerror
+from loop import Loop
 
 uv_get_pyobj  = lib.fatuv_get_pyobj
 uv_set_pyobj  = lib.fatuv_set_pyobj
@@ -24,7 +25,7 @@ def fatuv_close_callback(handle):
 
 class Handle(object):
 	def __init__(self, loop):
-		self.loop           = loop
+		self.loop           = loop or Loop.default_loop()
 		self.handle         = None       # initialize by derived class
 		self.close_callback = None
 		self.closing = False

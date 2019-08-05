@@ -8,6 +8,7 @@ import os.path
 import platform
 import sys
 sys.path.append('.')
+sys.path.append('./fatuv')
 import unittest
 
 import fatuv as uv

@@ -31,9 +31,12 @@ def fatuv_walk_callback(uv_handle, c_handles_set):
 		ffi.from_handle(c_handles_set).add(handle)
 
 class Loop(object):
-	@staticmethod
-	def default_loop():
-		return Loop(uv_default_loop())
+	_default = None
+	@classmethod
+	def default_loop(cls):
+		if cls._default is None:
+			Loop._default = Loop(default=True)
+		return Loop._default
 
 	def __init__(self, default=True):
 		self.handle = uv_default_loop() if default else uv_loop_new()
