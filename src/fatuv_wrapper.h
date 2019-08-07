@@ -6,11 +6,36 @@ typedef struct fatuv_buf_s {
   size_t len;
 } fatuv_buf_t;
 
-typedef struct fatuv_addrinfo_s {
-	int family;
-	int socktype;
-	int proto;
+struct fatuv_sockaddr
+{
+	unsigned short int sa_family;
+	char sa_data[14];
+};
+
+typedef struct fatuv_addrinfo_s
+{
+	int ai_flags;
+	int ai_family;
+	int ai_socktype;
+	int ai_protocol;
+	unsigned int ai_addrlen;
+	struct fatuv_sockaddr *ai_addr;
+	char *ai_canonname;
+	struct fatuv_addrinfo_s *ai_next;
 } fatuv_addrinfo_t;
+
+struct fat_in_addr
+{
+	unsigned int s_addr;
+};
+
+typedef struct fatuv_sockaddr_in
+{
+	unsigned short int sa_family;
+	unsigned short int sin_port;
+	struct fat_in_addr sin_addr;
+	unsigned char sin_zero[8];
+} fatuv_sockaddr_in_t;
 
 typedef struct fatuv_timespec_s {
 	long tv_sec;
@@ -66,7 +91,7 @@ typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
 typedef void (*fatuv_read_cb)(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
 typedef void (*fatuv_write_cb)(fatuv_stream_t* stream, int status);
-typedef void (*fatuv_getaddrinfo_cb)(fatuv_addrinfo_t* result, int status);
+typedef void (*fatuv_getaddrinfo_cb)(fatuv_getaddrinfo_t* req, fatuv_addrinfo_t* result, int status);
 typedef void (*fatuv_check_cb)(fatuv_check_t* handle);
 typedef void (*fatuv_prepare_cb)(fatuv_prepare_t* handle);
 typedef void (*fatuv_walk_cb)(fatuv_handle_t* handle,void* args);
@@ -160,6 +185,7 @@ int fatuv_tcp_init(fatuv_loop_t* loop, fatuv_tcp_t* handle);
 int fatuv_tcp_nodelay(fatuv_tcp_t* handle, int enable);
 int fatuv_tcp_keepalive(fatuv_tcp_t* handle, int enable, unsigned int delay);
 int fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port);
+int fatuv_ip4_name(const struct fatuv_sockaddr_in* src, char* dst, size_t size);
 int fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port);
 int fatuv_tcp_open(fatuv_tcp_t* handle, int fd);
 int fatuv_tcp_connect(fatuv_tcp_t* handle, const char* ip, int port, fatuv_connect_cb cb);
@@ -232,16 +258,9 @@ int fatuv_signal_stop(fatuv_signal_t* signal);
  */
 
 /* DNS */
-// typedef struct {
-//     void* data;
-//     uv_loop_t* loop;
-//     struct addrinfo* addrinfo;
-//     ...;
-// } fatuv_getaddrinfo_t;
-
-int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
-// int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_t*, uv_getaddrinfo_cb, const char*, const char*, const struct addrinfo*);
-
+fatuv_getaddrinfo_t* fatuv_getaddrinfo_ctx_new(void);
+void fatuv_getaddrinfo_ctx_delete(fatuv_getaddrinfo_t* ctx);
+int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_t* req, fatuv_getaddrinfo_cb cb, const char* node, const char* service, fatuv_addrinfo_t* hints);
 // int fatuv_getnameinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service);
 
 /*

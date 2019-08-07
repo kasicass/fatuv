@@ -29,6 +29,7 @@ extern "Python" void fatuv_udp_recv_callback(fatuv_udp_t* handle, ssize_t nread,
 extern "Python" void fatuv_pipe_connect_cb(fatuv_pipe_t*, int);
 extern "Python" void fatuv_tcp_connect_cb(fatuv_tcp_t*, int);
 extern "Python" void fatuv_exit_callback(fatuv_process_t*, int64_t, int);
+extern "Python" void fatuv_getaddrinfo_callback(fatuv_getaddrinfo_t*, fatuv_addrinfo_t*, int);
 """
 
 
@@ -36,7 +37,7 @@ ffibuilder.cdef(data)
 ffibuilder.set_source("_fatuv", """
 	#include "fatuv_wrapper.h"
 """,
-#	extra_compile_args=['-g'],
+	extra_compile_args=['-g'],
 	include_dirs=['../libuv/include'],
 	library_dirs=['../libuv/.libs'],
 	sources=['fatuv_wrapper.c'],

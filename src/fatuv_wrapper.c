@@ -251,6 +251,11 @@ fatuv_tcp_v4_bind(fatuv_tcp_t* handle, const char* ip, int port)
 }
 
 int
+fatuv_ip4_name(const struct fatuv_sockaddr_in* src, char* dst, size_t size) {
+	return uv_inet_ntop(AF_INET, &src->sin_addr, dst, size);
+}
+
+int
 fatuv_tcp_v4_getpeername(const fatuv_tcp_t* handle, char* ip, int* port)
 {
 	// ip = char[16]
@@ -624,20 +629,20 @@ fatuv_signal_stop(fatuv_signal_t* signal)
 /*
  * dns
  */
-
 typedef struct fatuv_getaddrinfo_ctx_s {
+	FATUV_PYOBJ_FIELDS;
 	uv_getaddrinfo_t req;
 	fatuv_getaddrinfo_cb callback;
 } fatuv_getaddrinfo_ctx_t;
 
-static fatuv_getaddrinfo_ctx_t*
+fatuv_getaddrinfo_t*
 fatuv_getaddrinfo_ctx_new(void)
 {
-	return (fatuv_getaddrinfo_ctx_t*)calloc(1, sizeof(fatuv_getaddrinfo_ctx_t));
+	return (fatuv_getaddrinfo_t*)calloc(1, sizeof(fatuv_getaddrinfo_ctx_t));
 }
 
-static void
-fatuv_getaddrinfo_ctx_delete(fatuv_getaddrinfo_ctx_t* ctx)
+void
+fatuv_getaddrinfo_ctx_delete(fatuv_getaddrinfo_t* ctx)
 {
 	free(ctx);
 }
@@ -645,37 +650,17 @@ fatuv_getaddrinfo_ctx_delete(fatuv_getaddrinfo_ctx_t* ctx)
 static void
 fatuv_getaddrinfo_callback_internal(uv_getaddrinfo_t* req, int status, struct addrinfo* res)
 {
-	fatuv_getaddrinfo_ctx_t *ctx; fatuv_addrinfo_t result;
-
-	ctx = (fatuv_getaddrinfo_ctx_t*)req;
-
-	// TODO(kasicass): multi addrinfo
-	result.family   = res->ai_family;
-	result.socktype = res->ai_socktype;
-	result.proto	= res->ai_protocol;
-
-	ctx->callback(&result, status);
-
-	fatuv_getaddrinfo_ctx_delete(ctx);
+	fatuv_getaddrinfo_ctx_t *ctx;	
+	ctx = UV2FAT_HANDLE(fatuv_getaddrinfo_ctx_t*,(fatuv_getaddrinfo_t*)req);
+	ctx->callback(req, (fatuv_addrinfo_t*)res, status);
 	uv_freeaddrinfo(res);
 }
 
-// TODO(kasicass): more args from py
-int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_cb getaddrinfo_cb, const char* node, const char* service)
+int fatuv_getaddrinfo(fatuv_loop_t* loop, fatuv_getaddrinfo_t* req, fatuv_getaddrinfo_cb cb, const char* node, const char* service, fatuv_addrinfo_t* hints)
 {
-	fatuv_getaddrinfo_ctx_t *ctx;
-	struct addrinfo hints;
-
-	ctx = fatuv_getaddrinfo_ctx_new();
-	ctx->callback = getaddrinfo_cb;
-
-	hints.ai_family   = PF_INET;
-	hints.ai_socktype = SOCK_STREAM;	
-	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_flags	= 0;
-
-	return uv_getaddrinfo(FAT2UV_HANDLE(uv_loop_t*, loop), (uv_getaddrinfo_t*)ctx,
-		fatuv_getaddrinfo_callback_internal, node, service, &hints);
+	fatuv_getaddrinfo_ctx_t* ctx = (fatuv_getaddrinfo_ctx_t*)req;
+	ctx->callback = cb;
+	return uv_getaddrinfo((uv_loop_t*)loop,FAT2UV_HANDLE(uv_getaddrinfo_t*,req), fatuv_getaddrinfo_callback_internal, node, service, (struct addrinfo*)hints);
 }
 
 /*
