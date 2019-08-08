@@ -12,10 +12,10 @@ uv_getaddrinfo = lib.fatuv_getaddrinfo
 
 __all__ = ['getaddrinfo']
 
-def getaddrinfo(loop, node, service, callback):
+def getaddrinfo(node, service, callback):
 	if isinstance(service, int):
 		service = str(service)
-	GetAddrInfo(node,service,callback,loop=loop)
+	GetAddrInfo(node,service,callback)
 
 @ffi.def_extern()
 def fatuv_getaddrinfo_callback(req, addrinfo_request, status):

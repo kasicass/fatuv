@@ -72,6 +72,7 @@ requests (test pass)
 - [x] GETADDRINFO
 - [ ] GETNAMEINFO
 - [x] UDP_SEND
+- [x] DNS
 
 
 [1]: https://github.com/saghul/pyuv/
