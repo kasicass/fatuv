@@ -6,8 +6,9 @@ from fatuv import Loop
 from fatuv import dns
 
 
-def dns_callback(result, error):
+def dns_callback(result, error, error_msg):
 	print('error', error)
+	print('error_msg', error_msg)
 	print('result:', result)
 
 loop = Loop.default_loop()

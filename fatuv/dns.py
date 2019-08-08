@@ -1,5 +1,6 @@
 from _fatuv import ffi, lib
 from fatuv import Loop
+from fatuv.internal import get_strerror
 import socket
 
 uv_get_pyobj  = lib.fatuv_get_pyobj
@@ -78,7 +79,7 @@ def unpack_sockaddr(c_sockaddr):
 		c_host = ffi.new('char[16]')
 		port = socket.ntohs(c_sockaddr_in4.sin_port)
 		lib.fatuv_ip4_name(c_sockaddr_in4, c_host, 16)
-		return Address4(ffi.string(c_host).decode(), port)
+		return Address4(ffi.string(c_host), port)
 	elif c_sockaddr.sa_family == socket.AF_INET6:
 		#not support
 		return None
@@ -90,7 +91,7 @@ def unpack_addrinfo(c_addrinfo):
 		socktype = c_next.ai_socktype
 		protocol = c_next.ai_protocol
 		if c_next.ai_canonname:
-			canonname = ffi.string(c_next.ai_canonname).decode()
+			canonname = ffi.string(c_next.ai_canonname)
 		else:
 			canonname = None
 		address = unpack_sockaddr(c_next.ai_addr) if c_next.ai_addr else None
@@ -113,7 +114,7 @@ class GetAddrInfo(object):
 		c_hints.ai_protocol = socket.IPPROTO_TCP
 		c_hints.ai_flags = 0
 
-		uv_getaddrinfo(loop.handle, request, lib.fatuv_getaddrinfo_callback, node, service, c_hints)
+		uv_getaddrinfo(self.loop.handle, request, lib.fatuv_getaddrinfo_callback, node, service, c_hints)
 		self.set_pending()
 
 	def set_pending(self):
@@ -128,7 +129,7 @@ class GetAddrInfo(object):
 		if callback:
 			self.get_addrinfo_callback = None
 			addrinfo = unpack_addrinfo(addrinfo_request)
-			callback(addrinfo,status)
+			callback(addrinfo,status,get_strerror(status))
 
 		self._dispose()
 
