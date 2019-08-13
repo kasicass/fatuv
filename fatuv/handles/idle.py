@@ -1,4 +1,3 @@
-import sys
 from _fatuv import ffi, lib
 from ..handle import Handle
 from .. import error
@@ -21,11 +20,11 @@ def fatuv_idle_callback(idle_handle):
 	obj._call_idle_callback()
 
 class Idle(Handle):
-	def __init__(self, loop):
+	def __init__(self, loop=None):
 		super(Idle, self).__init__(loop)
 
 		handle = uv_idle_new()
-		uv_idle_init(loop.handle, handle)
+		uv_idle_init(self.loop.handle, handle)
 
 		self._userdata = ffi.new_handle(self)
 		uv_set_pyobj(handle, self._userdata)

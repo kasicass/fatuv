@@ -1,4 +1,3 @@
-import sys
 from _fatuv import ffi, lib
 from ..handle import Handle
 from .. import error
@@ -21,11 +20,11 @@ def fatuv_check_callback(check_handle):
 	obj._call_check_callback()
 
 class Check(Handle):
-	def __init__(self, loop):
+	def __init__(self, loop=None):
 		super(Check, self).__init__(loop)
 
 		handle = uv_check_new()
-		uv_check_init(loop.handle, handle)
+		uv_check_init(self.loop.handle, handle)
 
 		self._userdata = ffi.new_handle(self)
 		uv_set_pyobj(handle, self._userdata)
