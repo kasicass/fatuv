@@ -1,3 +1,4 @@
+from __future__ import print_function
 from _fatuv import ffi, lib
 from .stream import Stream
 from ..error import TCPError
@@ -24,8 +25,10 @@ __all__ = ['TCP']
 
 @ffi.def_extern()
 def fatuv_tcp_connect_cb(handle, status):
+	print("fatuv_tcp_connect_cb")
 	ptr = uv_get_pyobj(handle)
 	obj = ffi.from_handle(ptr)
+	print("fatuv_tcp_connect_cb2")
 	obj._call_tcp_connect_callback(status)
 
 class TCP(Stream):

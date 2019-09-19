@@ -55,8 +55,11 @@ class Timer(Handle):
 		code = uv_timer_start(handle, lib.fatuv_timer_callback, int(timeout*1000), int(repeat*1000))
 		if code != error.STATUS_SUCCESS:
 			raise error.UVError(code)
+		self.set_pending()
 
 	def _call_timer_callback(self):
+		if not self.repeat:
+			self.clear_pending()
 		if self.timer_callback:
 			self.timer_callback(self)
 
@@ -68,6 +71,7 @@ class Timer(Handle):
 		if code != error.STATUS_SUCCESS:
 			raise error.UVError(code)
 		self.timer_callback = None
+		self.clear_pending()
 
 	def again(self):
 		assert self.handle
