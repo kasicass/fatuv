@@ -21,9 +21,9 @@ __all__ = ['Handle',]
 @ffi.def_extern()
 def fatuv_close_callback(handle):
 	ptr = uv_get_pyobj(handle)
-	print('fatuv_close_callback')
+	# print('fatuv_close_callback')
 	obj = ffi.from_handle(ptr)
-	print('fatuv_close_callback2')
+	# print('fatuv_close_callback2')
 	obj._call_close_callback()
 
 class Handle(object):
