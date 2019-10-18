@@ -1,8 +1,6 @@
 import os
 import os.path
 import subprocess
-import sys
-import platform
 
 DEPS_PATH='./'
 LIBUV_PATH = os.path.join(DEPS_PATH, 'libuv')

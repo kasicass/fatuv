@@ -16,8 +16,6 @@ aptitude install make gcc
 aptitude install python-dev python3-dev pypy pypy-dev
 aptitude install libtoolize
 
-$ python build_libuv.py clone
-$ python build_libuv.py build
 ```
 
 ### OpenBSD 6.4
