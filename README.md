@@ -29,8 +29,6 @@ $ vim ~/.profile
 AUTOMAKE_VERSION="1.16"
 AUTOCONF_VERSION="2.69"
 
-$ python build_libuv.py clone
-$ python build_livuv.py build
 ```
 
 ### Python & PyPy
