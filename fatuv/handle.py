@@ -1,9 +1,9 @@
 from __future__ import print_function
 from _fatuv import ffi, lib
 from .error import HandleError
-import error
+from . import error
 from .internal import get_strerror
-from loop import Loop
+from .loop import Loop
 
 uv_get_pyobj  = lib.fatuv_get_pyobj
 uv_set_pyobj  = lib.fatuv_set_pyobj

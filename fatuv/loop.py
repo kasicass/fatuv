@@ -67,7 +67,6 @@ class Loop(object):
 		handles = set()
 		if not self.closed:
 			uv_walk(self.handle, lib.fatuv_walk_callback, ffi.new_handle(handles))
-		print "loop,all handles,",handles
 		return handles
 
 	def close_all_handles(self, on_closed=None):

@@ -2,9 +2,9 @@ import sys
 from _fatuv import ffi, lib
 from ..handle import Handle
 from .. import error
-import signal
-import stream
-import pipe
+from . import signal
+from . import stream
+from . import pipe
 
 uv_get_pyobj    = lib.fatuv_get_pyobj
 uv_set_pyobj    = lib.fatuv_set_pyobj
