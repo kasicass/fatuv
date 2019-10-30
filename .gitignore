@@ -2,4 +2,5 @@
 *.pyc
 __pycache__
 _fatuv.c
+libuv/
 .vscode/
