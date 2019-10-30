@@ -1,5 +1,6 @@
 *.o
 *.pyc
 __pycache__
+*.so
 _fatuv.c
 .vscode/
