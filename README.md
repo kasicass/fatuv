@@ -13,9 +13,10 @@
 
 ```
 aptitude install make gcc
-aptitude install python-dev python3-dev pypy pypy-dev
+aptitude install libffi-dev python-dev python3-dev pypy pypy-dev
 aptitude install libtoolize
 
+python -m pip install cffi==1.12.3
 ```
 
 ### OpenBSD 6.4
