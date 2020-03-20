@@ -4,7 +4,7 @@ from .timer import *
 from .idle import *
 from .signal import *
 from .tty import *
-from .async import *
+from .Async import *
 from .fs_poll import *
 from .fs_event import *
 from .poll import *
