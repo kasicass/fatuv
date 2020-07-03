@@ -151,7 +151,7 @@ class TCP(Stream):
 		assert self.handle
 		ptr = ffi.new('int*')
 		ptr[0] = value
-
+		# c_buffer_size = ffi.new('int*', int(value / 2))
 		err = uv_recv_buffer_size(self.handle, ptr)
 		if err < 0:
 			raise TCPError((err, get_strerror(err)))

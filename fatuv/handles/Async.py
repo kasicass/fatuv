@@ -19,11 +19,11 @@ def fatuv_async_callback(async_handle):
 	obj._call_async_callback()
 
 class Async(Handle):
-	def __init__(self, loop, callback = None):
+	def __init__(self, loop = None, callback = None):
 		super(Async, self).__init__(loop)
 
 		handle = uv_async_new()
-		uv_async_init(loop.handle, handle, lib.fatuv_async_callback)
+		uv_async_init(self.loop.handle, handle, lib.fatuv_async_callback)
 
 		self._userdata = ffi.new_handle(self)
 		uv_set_pyobj(handle, self._userdata)
