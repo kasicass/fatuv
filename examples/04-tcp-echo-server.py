@@ -1,17 +1,17 @@
 from __future__ import print_function
 import sys
 sys.path.append('.')
-try:
-	from http_parser.parser import HttpParser
-except ImportError:
-	from http_parser.pyparser import HttpParser
+# try:
+# 	from http_parser.parser import HttpParser
+# except ImportError:
+# 	from http_parser.pyparser import HttpParser
 
 import signal
 import fatuv
 
 PAYLOAD_LEN_EXT16 = 0x7e
 
-p=HttpParser()
+# p=HttpParser()
 body = []
 def on_read(client, data, error):
 	if data is None:
@@ -20,24 +20,25 @@ def on_read(client, data, error):
 		clients.remove(client)
 		return
 	print('on_read',data)
-	recved = len(data)
-	nparsed = p.execute(data,recved)
-	assert nparsed == recved
+	client.write(data)
+	# recved = len(data)
+	# nparsed = p.execute(data,recved)
+	# assert nparsed == recved
 
-	if p.is_headers_complete():
-		print(p.get_headers())
+	# if p.is_headers_complete():
+	# 	print(p.get_headers())
 
-	if p.is_partial_body():
-		body.append(p.recv_body())
+	# if p.is_partial_body():
+	# 	body.append(p.recv_body())
 
-	if p.is_message_complete():
-		print('is_message_complete')
+	# if p.is_message_complete():
+	# 	print('is_message_complete')
 
-	print(body)
+	# print(body)
 
-	header = bytearray()
-	header.append(PAYLOAD_LEN_EXT16)
-	client.write(bytes(header))
+	# header = bytearray()
+	# header.append(PAYLOAD_LEN_EXT16)
+	# client.write(bytes(header))
 
 def on_connection(server, error):
 	client = fatuv.TCP(server.loop)

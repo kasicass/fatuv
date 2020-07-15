@@ -15,6 +15,8 @@ __all__ = ['getaddrinfo']
 def getaddrinfo(node, service, callback):
 	if isinstance(service, int):
 		service = str(service)
+	node = node.encode('utf-8')
+	service = service.encode('utf-8')
 	GetAddrInfo(node,service,callback)
 
 @ffi.def_extern()

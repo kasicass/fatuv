@@ -66,7 +66,7 @@ class TCP(Stream):
 		if self.closing:
 			raise error.HandleClosedError()
 		ip, port = addr
-		ip = ffi.new('char[]', ip)
+		ip = ffi.new('char[]', ip.encode('utf-8'))
 		code = uv_tcp_v4_bind(self.handle, ip, port)
 		if code != error.STATUS_SUCCESS:
 			raise error.UVError(code)
@@ -82,7 +82,7 @@ class TCP(Stream):
 		if err < 0:
 			raise TCPError((err, get_strerror(err)))
 
-		return ffi.string(ip), port[0]
+		return ffi.string(ip).decode('utf-8'), port[0]
 
 	def nodelay(self, enable):
 		assert self.handle
