@@ -4,6 +4,7 @@ from .stream import Stream
 from ..error import TCPError
 from ..internal import get_strerror
 from .. import error
+import six
 
 uv_get_pyobj          = lib.fatuv_get_pyobj
 uv_set_pyobj          = lib.fatuv_set_pyobj
@@ -66,7 +67,7 @@ class TCP(Stream):
 		if self.closing:
 			raise error.HandleClosedError()
 		ip, port = addr
-		ip = ffi.new('char[]', ip.encode('utf-8'))
+		ip = ffi.new('char[]', six.ensure_binary(ip))
 		code = uv_tcp_v4_bind(self.handle, ip, port)
 		if code != error.STATUS_SUCCESS:
 			raise error.UVError(code)
@@ -82,7 +83,7 @@ class TCP(Stream):
 		if err < 0:
 			raise TCPError((err, get_strerror(err)))
 
-		return ffi.string(ip).decode('utf-8'), port[0]
+		return six.ensure_str(ffi.string(ip)), port[0]
 
 	def nodelay(self, enable):
 		assert self.handle
