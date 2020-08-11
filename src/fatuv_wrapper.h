@@ -90,7 +90,7 @@ typedef void (*fatuv_idle_cb)(fatuv_idle_t* handle);
 typedef void (*fatuv_timer_cb)(fatuv_timer_t* handle);
 typedef void (*fatuv_signal_cb)(fatuv_signal_t* handle, int signum);
 typedef void (*fatuv_read_cb)(fatuv_stream_t* stream, ssize_t nread, const fatuv_buf_t* buf);
-typedef void (*fatuv_write_cb)(fatuv_stream_t* stream, int status);
+typedef void (*fatuv_write_cb)(fatuv_stream_t* stream, int status, void* userdata);
 typedef void (*fatuv_getaddrinfo_cb)(fatuv_getaddrinfo_t* req, fatuv_addrinfo_t* result, int status);
 typedef void (*fatuv_check_cb)(fatuv_check_t* handle);
 typedef void (*fatuv_prepare_cb)(fatuv_prepare_t* handle);
@@ -164,7 +164,7 @@ int fatuv_accept(fatuv_stream_t* server, fatuv_stream_t* client);
 int fatuv_read_start(fatuv_stream_t* stream, fatuv_read_cb read_cb);
 int fatuv_read_stop(fatuv_stream_t* stream);
 
-int fatuv_write(fatuv_stream_t* stream, char* buf, unsigned int bufsz, fatuv_write_cb cb);
+int fatuv_write(fatuv_stream_t* stream, char* buf, unsigned int bufsz, fatuv_write_cb cb, void* userdata);
 int fatuv_is_readable(fatuv_stream_t* stream);
 int fatuv_is_writable(fatuv_stream_t* stream);
 int fatuv_try_write(fatuv_stream_t* stream, char* buf, unsigned int bufsz);

@@ -14,7 +14,7 @@ class TestTimer(TestCase):
 
 		def on_timeout(_):
 			self.timer_called += 1
-			print self.timer_called
+			print(self.timer_called)
 
 		timer = uv.Timer(self.loop)
 		timer.start(on_timeout, 1, 0)

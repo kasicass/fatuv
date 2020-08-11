@@ -39,9 +39,8 @@ def fatuv_read_callback(stream_handle, nread, buf):
 		obj._call_read_callback(None, nread)
 
 @ffi.def_extern()
-def fatuv_write_callback(stream_handle, status):
-	ptr = uv_get_pyobj(stream_handle)
-	obj = ffi.from_handle(ptr)
+def fatuv_write_callback(stream_handle, status, write_request):
+	obj = ffi.from_handle(write_request)
 	obj._call_write_callback(status)
 
 @ffi.def_extern()
@@ -109,13 +108,7 @@ class Stream(Handle):
 		assert self.handle
 		if self.closing:
 			raise error.HandleClosedError()
-		self.write_callback = callback
-		uv_write(handle, data, len(data), lib.fatuv_write_callback)
-
-	def _call_write_callback(self, status):
-		callback = self.write_callback
-		if callback:
-			callback(self, status)
+		return WriteRequest(self.loop, handle, data, callback)
 
 	def try_write(self, data):
 		handle = self.handle
@@ -151,3 +144,25 @@ class Stream(Handle):
 		if self.closing:
 			return False
 		return bool(uv_is_writable(self.handle))
+
+class WriteRequest(object):
+	def __init__(self, loop, stream, buffers, callback=None):
+		self.write_callback = callback
+		self.loop = loop
+		self.handle = stream
+		self._userdata = ffi.new_handle(self)
+		self.data = ffi.new('char[]', buffers)
+		self.set_pending()
+		uv_write(stream, self.data, len(self.data)-1, lib.fatuv_write_callback, self._userdata)
+	
+	def set_pending(self):
+		self.loop.set_pending(self)
+
+	def clear_pending(self):
+		self.loop.clear_pending(self)		
+
+	def _call_write_callback(self, status):
+		callback = self.write_callback
+		self.clear_pending()
+		if callback:
+			callback(status)
