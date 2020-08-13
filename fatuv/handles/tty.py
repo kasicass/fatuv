@@ -1,4 +1,4 @@
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 from .stream import Stream
 from .. import error
 

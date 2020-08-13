@@ -1,4 +1,4 @@
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 from ..handle import Handle
 from .. import error
 import signal as std_signal

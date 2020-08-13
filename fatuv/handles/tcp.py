@@ -1,5 +1,5 @@
 from __future__ import print_function
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 from .stream import Stream
 from ..error import TCPError
 from ..internal import get_strerror

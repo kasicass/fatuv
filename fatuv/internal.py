@@ -1,4 +1,4 @@
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 
 uv_strerror = lib.uv_strerror
 uv_err_name = lib.uv_err_name

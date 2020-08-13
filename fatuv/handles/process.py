@@ -1,5 +1,5 @@
 import sys
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 from ..handle import Handle
 from .. import error
 from . import signal

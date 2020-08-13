@@ -1,4 +1,4 @@
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 from ..handle import Handle
 from ..internal import get_strerror
 from .. import error

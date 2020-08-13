@@ -8,7 +8,7 @@ import unittest
 import socket
 import fatuv as uv
 
-from _fatuv import lib
+from _fatcore import lib
 
 BAD_PIPE = '/path/socket/notexist'
 TEST_PIPE1 = '/tmp/python-uv-test1'

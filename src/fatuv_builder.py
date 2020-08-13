@@ -115,7 +115,7 @@ if sys.platform.startswith('linux'):
     _define_macro('_POSIX_C_SOURCE', '200112')
 
 ffibuilder.cdef(data)
-ffibuilder.set_source("_fatuv", 
+ffibuilder.set_source("_fatcore", 
 	_source,
 	extra_compile_args=['-g'],
 	sources=LIBUV_SOURCES,

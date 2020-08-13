@@ -9,7 +9,7 @@ import unittest
 import fatuv as uv
 import socket
 
-from _fatuv import lib
+from _fatcore import lib
 
 MULTICAST_ADDRESS = '239.255.0.1'
 

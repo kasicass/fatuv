@@ -1,4 +1,4 @@
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 
 uv_default_loop = lib.fatuv_default_loop
 

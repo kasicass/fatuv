@@ -1,4 +1,4 @@
-from _fatuv import ffi, lib
+from _fatcore import ffi, lib
 from fatuv import Loop
 from fatuv.internal import get_strerror
 import socket

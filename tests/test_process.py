@@ -6,7 +6,7 @@ from common import TestCase
 import unittest
 import fatuv as uv
 import os
-from _fatuv import lib
+from _fatcore import lib
 import json
 
 
