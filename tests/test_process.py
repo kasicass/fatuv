@@ -79,7 +79,7 @@ class TestProcess(TestCase):
 
 	def test_process_dump_env(self):
 		arguments = [sys.executable, PROGRAM_DUMP_ENV]
-		print PROGRAM_DUMP_ENV
+		print(PROGRAM_DUMP_ENV)
 		self.buffer = b''
 		self.returncode = None
 
